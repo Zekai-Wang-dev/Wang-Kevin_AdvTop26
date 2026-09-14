@@ -172,10 +172,10 @@ public class CombatSystem
     public IEnumerator ClashLoop(EngagedCharacter engagedPlayer, EngagedCharacter engagedEnemy, float clashDuration)
     {
 
-        int plrCoinCount = engagedPlayer.currentcoinCount;
-        int enemyCoinCount = engagedEnemy.currentcoinCount;
+        int plrCoinCount = 1;
+        int enemyCoinCount = 1;
 
-        while (plrCoinCount > 0 || enemyCoinCount > 0)
+        while (plrCoinCount > 0 && enemyCoinCount > 0)
         {
 
             attemptBeginTurn(engagedPlayer, engagedEnemy);
@@ -204,7 +204,7 @@ public class CombatSystem
         if (plrCoinCount <= 0)
         {
 
-            engagedEnemy.takeDamage(resolveFinalDamage(engagedPlayer, plrCoinCount));
+            engagedPlayer.takeDamage(resolveFinalDamage(engagedEnemy, enemyCoinCount));
             Debug.Log($"{engagedPlayer.character.name} has no coins left. {engagedPlayer.character.name} takes damage.");
             engagedPlayer.resetSkill();
             engagedEnemy.resetSkill();
@@ -212,7 +212,7 @@ public class CombatSystem
         }
         else if (enemyCoinCount <= 0)
         {
-            engagedPlayer.takeDamage(resolveFinalDamage(engagedEnemy, enemyCoinCount));
+            engagedEnemy.takeDamage(resolveFinalDamage(engagedPlayer, plrCoinCount));
             Debug.Log($"{engagedEnemy.character.name} has no coins left. {engagedEnemy.character.name} takes damage.");
             engagedPlayer.resetSkill();
             engagedEnemy.resetSkill();
