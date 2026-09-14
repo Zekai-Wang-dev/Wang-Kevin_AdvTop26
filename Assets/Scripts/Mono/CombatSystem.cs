@@ -82,17 +82,12 @@ public class EngagedCharacter
 
 }
 
-public class CombatSystem : MonoBehaviour
+public class CombatSystem 
 {
 
-    public EngagedCharacter engagedPlayer = new EngagedCharacter();
-    public EngagedCharacter engagedEnemy = new EngagedCharacter();
+    public List<Character> turnOrder;
 
-    public float clashDuration = 2f; // Duration of the clash in seconds
-
-    public List<Character> turnOrder = new List<Character>();
-
-    public void PrepareCombat(Character player, Character enemy)
+    public void PrepareCombat(Character player, Character enemy, EngagedCharacter engagedPlayer, EngagedCharacter engagedEnemy)
     {
 
         engagedPlayer.character = player;
@@ -101,35 +96,41 @@ public class CombatSystem : MonoBehaviour
         engagedPlayer.resetAll();
         engagedEnemy.resetAll();
 
+        Debug.Log($"Combat prepared between {player.name} and {enemy.name}. Turn order will be determined based on speed.");
+
     }
 
-    public void StartCombat(Character player, Character enemy)
+    public void StartCombat(Character player, Character enemy, EngagedCharacter engagedPlayer, EngagedCharacter engagedEnemy)
     {
-        PrepareCombat(player, enemy);
+        PrepareCombat(player, enemy, engagedPlayer, engagedEnemy);
         turnOrder = ResolveTurnOrder(player, enemy);
 
+        Debug.Log($"Combat started between {player.name} and {enemy.name}. Turn order: {turnOrder[0].name} goes first, followed by {turnOrder[1].name}.");
+        attemptBeginTurn(engagedPlayer, engagedEnemy); 
 
     }
 
-    public void attemptBeginTurn()
+    public void attemptBeginTurn(EngagedCharacter engagedPlayer, EngagedCharacter engagedEnemy)
     {
 
         if (engagedPlayer.chosenSkill != null || engagedEnemy.chosenSkill != null)
         {
-            engagedEnemy.chooserandomSkill();
+            
+            StartClash(engagedPlayer.character, engagedEnemy.character, engagedPlayer, engagedEnemy);
 
-            StartCoroutine(ClashLoop());
         }
         else
         {
 
-            Debug.Log("Both characters must choose a skill before starting the clash.");
+            engagedEnemy.chooserandomSkill();
+            engagedPlayer.chooserandomSkill();
+            StartClash(engagedPlayer.character, engagedEnemy.character, engagedPlayer, engagedEnemy);
 
         }
 
     }
 
-    public void StartClash(Character player, Character enemy)
+    public void StartClash(Character player, Character enemy, EngagedCharacter engagedPlayer, EngagedCharacter engagedEnemy)
     {
 
         Skill playerSkill = engagedPlayer.chosenSkill;
@@ -142,37 +143,41 @@ public class CombatSystem : MonoBehaviour
         {
 
             engagedEnemy.loseacoin();
+            Debug.Log($"{player.name} wins the clash! {enemy.name} loses a coin.");
 
         }
         else
         {
 
             engagedPlayer.loseacoin();
+            Debug.Log($"{enemy.name} wins the clash! {player.name} loses a coin.");
 
         }
 
     }
 
-    public IEnumerator ClashLoop()
+    public IEnumerator ClashLoop(EngagedCharacter engagedPlayer, EngagedCharacter engagedEnemy, float clashDuration)
     {
 
-        StartClash(engagedPlayer.character, engagedEnemy.character);
+        StartClash(engagedPlayer.character, engagedEnemy.character, engagedPlayer, engagedEnemy);
 
         int plrCoinCount = engagedPlayer.currentcoinCount;
         int enemyCoinCount = engagedEnemy.currentcoinCount;
 
         if (plrCoinCount <= 0 || enemyCoinCount <= 0)
         {
-            attemptresolveClash();
+            attemptresolveClash(engagedPlayer, engagedEnemy);
             yield return null;
 
         }
+
+        Debug.Log("Clash loop completed. Waiting for the next clash...");
 
         yield return new WaitForSeconds(clashDuration);
 
     }
 
-    public void attemptresolveClash()
+    public void attemptresolveClash(EngagedCharacter engagedPlayer, EngagedCharacter engagedEnemy)
     {
 
         int plrCoinCount = engagedPlayer.currentcoinCount;
@@ -182,12 +187,13 @@ public class CombatSystem : MonoBehaviour
         {
 
             engagedEnemy.takeDamage(resolveFinalDamage(engagedPlayer, plrCoinCount));
-            
+            Debug.Log($"{engagedPlayer.character.name} has no coins left. {engagedEnemy.character.name} takes damage.");
+
         }
         else if (enemyCoinCount <= 0)
         {
-
             engagedPlayer.takeDamage(resolveFinalDamage(engagedEnemy, enemyCoinCount));
+            Debug.Log($"{engagedEnemy.character.name} has no coins left. {engagedPlayer.character.name} takes damage.");
 
         }
 
@@ -205,6 +211,8 @@ public class CombatSystem : MonoBehaviour
 
         }
 
+        Debug.Log($"{engagedCharacter.character.name} has {coinCount} coins left. Total damage calculated: {finalDamage}");
+
         return finalDamage;
     }
 
@@ -219,6 +227,8 @@ public class CombatSystem : MonoBehaviour
             finalPower = (int)(basePower/3 + coin.coinPower); 
 
         }
+
+        Debug.Log($"Coin flip result: {coinFlip}. Base power: {basePower}, Coin power: {coin.coinPower}, Final power: {finalPower}");
 
         return finalPower; 
 
@@ -253,6 +263,8 @@ public class CombatSystem : MonoBehaviour
                 turnOrder.Add(player);
             }
         }
+
+        Debug.Log($"Turn order resolved: {turnOrder[0].name} goes first, followed by {turnOrder[1].name}.");
 
         return turnOrder;
 
