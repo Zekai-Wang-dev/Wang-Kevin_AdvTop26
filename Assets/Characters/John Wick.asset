@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 886d4d1af1acca74f97a525c71eb3cd5, type: 3}
+  m_Name: John Wick
+  m_EditorClassIdentifier: Assembly-CSharp::Character
+  name: John WIck
+  health: 200
+  speed: 30
+  basePower: 35
+  skills:
+  - name: Pencil
+    coins:
+    - coinPower: 8
+  - name: Gun
+    coins:
+    - coinPower: 3
+    - coinPower: 3
+    - coinPower: 4
