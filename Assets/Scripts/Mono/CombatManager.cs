@@ -32,7 +32,7 @@ public class CombatManager : MonoBehaviour
         }
 
         combatSystem.StartCombat(player, enemy, engagedPlayer, engagedEnemy);
-        combatSystem.ClashLoop(engagedPlayer, engagedEnemy, clashDuration);
+        StartCoroutine(combatSystem.ClashLoop(engagedPlayer, engagedEnemy, clashDuration));
 
     }
 

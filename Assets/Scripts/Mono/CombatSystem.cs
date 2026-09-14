@@ -2,9 +2,11 @@ using JetBrains.Annotations;
 using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityPipeline.Microsoft.CodeAnalysis.CSharp.Syntax;
 
+[System.Serializable]
 public class EngagedCharacter
 {
 
@@ -17,6 +19,9 @@ public class EngagedCharacter
     public void chooseSkill(Skill skill)
     {
         chosenSkill = skill;
+        Debug.Log($"{character.name} has chosen the skill: {skill.name}");
+        setCurrentCoinCount();
+
     }
 
     public void chooserandomSkill()
@@ -25,7 +30,14 @@ public class EngagedCharacter
         {
             int randomIndex = Random.Range(0, character.skills.Count);
             chosenSkill = character.skills[randomIndex];
+            Debug.Log($"{character.name} has randomly chosen the skill: {chosenSkill.name}");
+            setCurrentCoinCount();
         }
+    }
+
+    public void setCurrentCoinCount()
+    {
+        currentcoinCount = chosenSkill.coins.Count;
     }
 
     public void takeDamage(float damage)
@@ -106,7 +118,6 @@ public class CombatSystem
         turnOrder = ResolveTurnOrder(player, enemy);
 
         Debug.Log($"Combat started between {player.name} and {enemy.name}. Turn order: {turnOrder[0].name} goes first, followed by {turnOrder[1].name}.");
-        attemptBeginTurn(engagedPlayer, engagedEnemy); 
 
     }
 
@@ -117,6 +128,7 @@ public class CombatSystem
         {
             
             StartClash(engagedPlayer.character, engagedEnemy.character, engagedPlayer, engagedEnemy);
+            Debug.Log($"Both {engagedPlayer.character.name} and {engagedEnemy.character.name} have chosen their skills. Clash initiated.");
 
         }
         else
@@ -125,6 +137,7 @@ public class CombatSystem
             engagedEnemy.chooserandomSkill();
             engagedPlayer.chooserandomSkill();
             StartClash(engagedPlayer.character, engagedEnemy.character, engagedPlayer, engagedEnemy);
+            Debug.Log($"One or both characters did not choose a skill. Random skills have been chosen for {engagedPlayer.character.name} and {engagedEnemy.character.name}. Clash initiated.");
 
         }
 
@@ -159,21 +172,26 @@ public class CombatSystem
     public IEnumerator ClashLoop(EngagedCharacter engagedPlayer, EngagedCharacter engagedEnemy, float clashDuration)
     {
 
-        StartClash(engagedPlayer.character, engagedEnemy.character, engagedPlayer, engagedEnemy);
-
         int plrCoinCount = engagedPlayer.currentcoinCount;
         int enemyCoinCount = engagedEnemy.currentcoinCount;
 
-        if (plrCoinCount <= 0 || enemyCoinCount <= 0)
+        while (plrCoinCount > 0 || enemyCoinCount > 0)
         {
-            attemptresolveClash(engagedPlayer, engagedEnemy);
-            yield return null;
+
+            attemptBeginTurn(engagedPlayer, engagedEnemy);
+
+            plrCoinCount = engagedPlayer.currentcoinCount;
+            enemyCoinCount = engagedEnemy.currentcoinCount;
+
+            Debug.Log("Clash loop completed. Waiting for the next clash...");
+
+            yield return new WaitForSeconds(clashDuration);
 
         }
 
-        Debug.Log("Clash loop completed. Waiting for the next clash...");
+        attemptresolveClash(engagedPlayer, engagedEnemy);
 
-        yield return new WaitForSeconds(clashDuration);
+        yield return null;
 
     }
 
@@ -187,13 +205,17 @@ public class CombatSystem
         {
 
             engagedEnemy.takeDamage(resolveFinalDamage(engagedPlayer, plrCoinCount));
-            Debug.Log($"{engagedPlayer.character.name} has no coins left. {engagedEnemy.character.name} takes damage.");
+            Debug.Log($"{engagedPlayer.character.name} has no coins left. {engagedPlayer.character.name} takes damage.");
+            engagedPlayer.resetSkill();
+            engagedEnemy.resetSkill();
 
         }
         else if (enemyCoinCount <= 0)
         {
             engagedPlayer.takeDamage(resolveFinalDamage(engagedEnemy, enemyCoinCount));
-            Debug.Log($"{engagedEnemy.character.name} has no coins left. {engagedPlayer.character.name} takes damage.");
+            Debug.Log($"{engagedEnemy.character.name} has no coins left. {engagedEnemy.character.name} takes damage.");
+            engagedPlayer.resetSkill();
+            engagedEnemy.resetSkill();
 
         }
 
@@ -226,6 +248,10 @@ public class CombatSystem
 
             finalPower = (int)(basePower/3 + coin.coinPower); 
 
+        }
+        else 
+        {
+            finalPower = (int)(basePower/3 - coin.coinPower);
         }
 
         Debug.Log($"Coin flip result: {coinFlip}. Base power: {basePower}, Coin power: {coin.coinPower}, Final power: {finalPower}");
