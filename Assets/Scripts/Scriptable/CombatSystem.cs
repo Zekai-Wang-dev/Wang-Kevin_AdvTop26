@@ -99,6 +99,7 @@ public class CombatSystem
 
     public List<Character> turnOrder;
 
+    public event System.Action onCoinsChanged;
     public void PrepareCombat(Character player, Character enemy, EngagedCharacter engagedPlayer, EngagedCharacter engagedEnemy)
     {
 
@@ -156,6 +157,7 @@ public class CombatSystem
         {
 
             engagedEnemy.loseacoin();
+            onCoinsChanged?.Invoke();
             Debug.Log($"{player.name} wins the clash! {enemy.name} loses a coin.");
 
         }
@@ -163,35 +165,10 @@ public class CombatSystem
         {
 
             engagedPlayer.loseacoin();
+            onCoinsChanged?.Invoke();
             Debug.Log($"{enemy.name} wins the clash! {player.name} loses a coin.");
 
         }
-
-    }
-
-    public IEnumerator ClashLoop(EngagedCharacter engagedPlayer, EngagedCharacter engagedEnemy, float clashDuration)
-    {
-
-        int plrCoinCount = 1;
-        int enemyCoinCount = 1;
-
-        while (plrCoinCount > 0 && enemyCoinCount > 0)
-        {
-
-            attemptBeginTurn(engagedPlayer, engagedEnemy);
-
-            plrCoinCount = engagedPlayer.currentcoinCount;
-            enemyCoinCount = engagedEnemy.currentcoinCount;
-
-            Debug.Log("Clash loop completed. Waiting for the next clash...");
-
-            yield return new WaitForSeconds(clashDuration);
-
-        }
-
-        attemptresolveClash(engagedPlayer, engagedEnemy);
-
-        yield return null;
 
     }
 
