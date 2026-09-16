@@ -26,8 +26,6 @@ public class CombatManager : MonoBehaviour
 
     }
 
-
-
     public IEnumerator ClashLoop(EngagedCharacter engagedPlayer, EngagedCharacter engagedEnemy, float clashDuration)
     {
 
