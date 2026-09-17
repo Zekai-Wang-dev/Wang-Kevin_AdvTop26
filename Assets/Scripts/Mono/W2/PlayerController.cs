@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using NodeCanvas.Framework;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -8,7 +9,9 @@ public class PlayerController : MonoBehaviour
 
     public float playerSpeed = 5f;
 
-    public Rigidbody rb; 
+    public Rigidbody rb;
+
+    public Blackboard targetBlackboard; 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -24,6 +27,7 @@ public class PlayerController : MonoBehaviour
     {
         
         controlPlayer();
+        checkView();
 
     }
 
@@ -43,6 +47,27 @@ public class PlayerController : MonoBehaviour
 
 
         rb.linearVelocity = new Vector3(moveDirection.x, rb.linearVelocity.y, moveDirection.y);
+
+    }
+
+    public void checkView()
+    {
+
+        Ray ray = new Ray(transform.position, transform.forward);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, 10f))
+        {
+
+            if (hit.collider.CompareTag("Enemy"))
+            {
+                targetBlackboard.SetVariableValue("isSeen", true);
+            }
+            else
+            {
+                targetBlackboard.SetVariableValue("isSeen", false);
+            }
+
+        }
 
     }
 
