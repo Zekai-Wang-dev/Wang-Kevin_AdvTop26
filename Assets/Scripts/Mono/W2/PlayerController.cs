@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
 
     public Rigidbody rb;
 
-    public Blackboard targetBlackboard; 
+    public ActiveEnemyRegistry activeEnemyRegistry;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -53,22 +53,25 @@ public class PlayerController : MonoBehaviour
     public void checkView()
     {
 
-        Ray ray = new Ray(transform.position, transform.forward);
+        
+        Vector2 lookDirection = new Vector2(transform.forward.x, transform.forward.z).normalized;
 
-        if (Physics.Raycast(ray, out RaycastHit hit, 10f))
+        foreach (Transform enemy in activeEnemyRegistry.enemies)
         {
+            Vector2 enemyDirection = new Vector2(enemy.position.x - transform.position.x, enemy.position.z - transform.position.z).normalized;
+            float angle = Vector2.Angle(lookDirection, enemyDirection);
+            Blackboard targetBlackboard = enemy.GetComponent<Blackboard>();
 
-            if (hit.collider.CompareTag("Enemy"))
+            if (angle < 30f)
             {
                 targetBlackboard.SetVariableValue("isSeen", true);
+                return;
             }
             else
             {
                 targetBlackboard.SetVariableValue("isSeen", false);
             }
-
         }
-
     }
 
 }
