@@ -53,7 +53,6 @@ public class PlayerController : MonoBehaviour
     public void checkView()
     {
 
-        
         Vector2 lookDirection = new Vector2(transform.forward.x, transform.forward.z).normalized;
 
         foreach (Transform enemy in activeEnemyRegistry.enemies)
