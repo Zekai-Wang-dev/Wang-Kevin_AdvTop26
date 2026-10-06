@@ -231,6 +231,74 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &690476398
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 690476400}
+  - component: {fileID: 690476399}
+  - component: {fileID: 690476401}
+  m_Layer: 0
+  m_Name: WFCManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &690476399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690476398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8324158c4aa6a940b95f4655745763a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WFCManager
+  wfcGenerator: {fileID: 690476401}
+--- !u!4 &690476400
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690476398}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.25649, y: 0.58485, z: 2.01767}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &690476401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690476398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17c70406d57e0594d86baacf04f4851c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WFCGenerator
+  GRID_SIZE: {x: 10, y: 10}
+  CELL_SIZE: {x: 10, y: 10}
+  GRID_OFFSET: {x: 0, y: 0}
+  possibleRooms:
+  - {fileID: 11400000, guid: 0251c40a9d9e97040866fcfc4611213b, type: 2}
+  - {fileID: 11400000, guid: b45e5e897e13ee84799e0cf4d081be39, type: 2}
+  - {fileID: 11400000, guid: f75bba4b7bddaca408049c033920dd13, type: 2}
+  - {fileID: 11400000, guid: a80d0b6adb9034a459d8390f52cbbf98, type: 2}
+  - {fileID: 11400000, guid: 5c9ebb259f473b546aa700575f9822f6, type: 2}
+  generationComplete: 0
 --- !u!1 &711759710
 GameObject:
   m_ObjectHideFlags: 0
@@ -552,3 +620,4 @@ SceneRoots:
   - {fileID: 91642071}
   - {fileID: 2083912424}
   - {fileID: 711759712}
+  - {fileID: 690476400}

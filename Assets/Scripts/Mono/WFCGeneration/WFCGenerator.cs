@@ -30,6 +30,9 @@ public class WFCGenerator : MonoBehaviour
     public List<Rooms> possibleRooms = new List<Rooms>();
 
     private List<Cells> cells = new List<Cells>();
+    public bool failed = false;
+
+    public bool generationComplete = false;
 
     public void GenerateCells()
     {
@@ -46,51 +49,187 @@ public class WFCGenerator : MonoBehaviour
 
     }
 
-    public void SelectFirstRoom()
+    public bool CheckForUncollapsedCells()
     {
 
         for (int i = 0; i < cells.Count; i++)
         {
             if (!cells[i].collapsed)
             {
-                int randomIndex = Random.Range(0, cells[i].possibleRooms.Count);
-                cells[i].room = cells[i].possibleRooms[randomIndex];
-                cells[i].collapsed = true;
+                return false;
             }
+        }
+
+        generationComplete = true;
+
+        return generationComplete; 
+
+    }
+
+    public void SelectNextRoom()
+    {
+
+        int lowestEntropy = possibleRooms.Count;
+        int cellIndex = -1; 
+
+        for (int i = 0; i < cells.Count; i++)
+        {
+            if (!cells[i].collapsed)
+            {
+
+                if (cells[i].possibleRooms.Count < lowestEntropy)
+                {
+                    lowestEntropy = cells[i].possibleRooms.Count;
+                    cellIndex = i;
+                    Debug.Log("Lowest entropy found at cell index: " + cellIndex + " with entropy: " + lowestEntropy);
+                }
+
+            }
+        }
+
+        if (cellIndex != -1)
+        {
+            int randomRoomIndex = Random.Range(0, cells[cellIndex].possibleRooms.Count);
+            cells[cellIndex].room = cells[cellIndex].possibleRooms[randomRoomIndex];
+            cells[cellIndex].collapsed = true;
+            CheckForConflicts();
+        }
+        else
+        {
+            int randomCellIndex = Random.Range(0, cells.Count);
+            int randomRoomIndex = Random.Range(0, cells[randomCellIndex].possibleRooms.Count);
+            cells[randomCellIndex].room = cells[randomCellIndex].possibleRooms[randomRoomIndex];
+            cells[randomCellIndex].collapsed = true;
+            CheckForConflicts();
         }
 
     }
 
-    public void CheckForConflict(int cellIndex)
+    public void CheckForConflicts()
     {
 
-        if (cells[cellIndex].collapsed)
+        for (int i = 0; i < cells.Count; i++)
         {
-            return;
-        }
 
-        if (cells[cellIndex].possibleRooms.Count == 0)
-        {
-            Debug.LogError("No possible rooms for cell at index: " + cellIndex);
-            return;
-        }
-
-        if (cellIndex % (int)GRID_SIZE.x != 0)
-        {
-            
-            Cells tempCells = cells[cellIndex - 1];
-
-            if (tempCells.room.CheckDirectionConflicts(cellIndex - 1, tempCells.room.directionTypes[3]))
+            if (cells[i].collapsed)
             {
-                cells[cellIndex].possibleRooms.Remove(tempCells.room);
+                continue;
+            }
 
-                if (cells[cellIndex].possibleRooms.Count == 1)
+            if (cells[i].possibleRooms.Count == 0)
+            {
+                Debug.LogError("No possible rooms for cell at index: " + i);
+                failed = true;
+                break; 
+            }
+
+            if (i % (int)GRID_SIZE.x != 0)
+            {
+
+                Cells tempCells = cells[i - 1];
+
+                if (tempCells.possibleRooms.Count == 0)
                 {
-                    cells[cellIndex].room = cells[cellIndex].possibleRooms[0];
-                    cells[cellIndex].collapsed = true;
-
+                    Debug.LogError("No possible rooms for cell at index: " + (i - 1));
+                    failed = true;
+                    break;
                 }
 
+                for (int j = 0; j < tempCells.possibleRooms.Count; j++)
+                {
+                    if (tempCells.possibleRooms[j].CheckDirectionConflicts(i - 1, tempCells.possibleRooms[j].directionTypes[3]))
+                    {
+                        cells[i - 1].possibleRooms.Remove(tempCells.possibleRooms[j]);
+                        j--;
+
+                        if (cells[i - 1].possibleRooms.Count == 1)
+                        {
+                            cells[i - 1].room = cells[i - 1].possibleRooms[0];
+                            cells[i - 1].collapsed = true;
+
+                        }
+                    }
+                }
+
+            }
+            if (i % (int)GRID_SIZE.x != (int)GRID_SIZE.x - 1)
+            {
+                Cells tempCells = cells[i + 1];
+
+                if (tempCells.possibleRooms.Count == 0)
+                {
+                    Debug.LogError("No possible rooms for cell at index: " + (i - 1));
+                    failed = true;
+                    break;
+                }
+
+                for (int j = 0; j < tempCells.possibleRooms.Count; j++)
+                {
+                    if (tempCells.possibleRooms[j].CheckDirectionConflicts(i + 1, tempCells.possibleRooms[j].directionTypes[2]))
+                    {
+                        cells[i + 1].possibleRooms.Remove(tempCells.possibleRooms[j]);
+                        j--;
+                        if (cells[i + 1].possibleRooms.Count == 1)
+                        {
+                            cells[i + 1].room = cells[i + 1].possibleRooms[0];
+                            cells[i + 1].collapsed = true;
+                        }
+                    }
+                }
+
+            }
+            if (i / (int)GRID_SIZE.x != 0)
+            {
+                Cells tempCells = cells[i - (int)GRID_SIZE.x];
+
+                if (tempCells.possibleRooms.Count == 0)
+                {
+                    Debug.LogError("No possible rooms for cell at index: " + (i - 1));
+                    failed = true;
+                    break;
+                }
+
+                for (int j = 0; j < tempCells.possibleRooms.Count; j++)
+                {
+                    if (tempCells.possibleRooms[j].CheckDirectionConflicts(i - (int)GRID_SIZE.x, tempCells.possibleRooms[j].directionTypes[0]))
+                    {
+                        cells[i - (int)GRID_SIZE.x].possibleRooms.Remove(tempCells.possibleRooms[j]);
+                        j--;
+                        if (cells[i - (int)GRID_SIZE.x].possibleRooms.Count == 1)
+                        {
+                            cells[i - (int)GRID_SIZE.x].room = cells[i - (int)GRID_SIZE.x].possibleRooms[0];
+                            cells[i - (int)GRID_SIZE.x].collapsed = true;
+                        }
+                    }
+                }
+
+            }
+            if (i / (int)GRID_SIZE.x != (int)GRID_SIZE.y - 1)
+            {
+
+                Cells tempCells = cells[i + (int)GRID_SIZE.x];
+
+                if (tempCells.possibleRooms.Count == 0)
+                {
+                    Debug.LogError("No possible rooms for cell at index: " + (i - 1));
+                    failed = true;
+                    break;
+                }
+
+                for (int j = 0; j < tempCells.possibleRooms.Count; j++)
+                {
+                    if (tempCells.possibleRooms[j].CheckDirectionConflicts(i + (int)GRID_SIZE.x, tempCells.possibleRooms[j].directionTypes[1]))
+                    {
+                        cells[i + (int)GRID_SIZE.x].possibleRooms.Remove(tempCells.possibleRooms[j]);
+                        j--;
+                        if (cells[i + (int)GRID_SIZE.x].possibleRooms.Count == 1)
+                        {
+                            cells[i + (int)GRID_SIZE.x].room = cells[i + (int)GRID_SIZE.x].possibleRooms[0];
+                            cells[i + (int)GRID_SIZE.x].collapsed = true;
+                        }
+                    }
+                }
+   
             }
 
         }
