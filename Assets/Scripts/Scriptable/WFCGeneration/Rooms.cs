@@ -6,26 +6,40 @@ using UnityEngine;
 public class Rooms : ScriptableObject
 {
 
-    DirectionType[] directionTypes = new DirectionType[4] { DirectionType.None, DirectionType.None, DirectionType.None, DirectionType.None };
+    [SerializeField]
+    public DirectionType[] directionTypes = new DirectionType[4] { DirectionType.None, DirectionType.None, DirectionType.None, DirectionType.None };
 
-    public DirectionType CheckDirectionConflicts(int directionIndex, DirectionType directionType)
+    public bool CheckDirectionConflicts(int directionIndex, DirectionType directionType)
     {
 
-        int oppositeDirectionIndex = (directionIndex + 2) % 4;
+        bool conflict = false;
 
-        DirectionType conflictType = DirectionType.None; 
+        int oppositeDirectionIndex = (directionIndex + 2) % 4;
 
         if (directionTypes[oppositeDirectionIndex] != DirectionType.None)
         {
 
             if (directionTypes[oppositeDirectionIndex] == DirectionType.Door && directionType == DirectionType.Wall)
             {
-                conflictType = directionTypes[oppositeDirectionIndex];
+                conflict = true;
+            }
+            else if (directionTypes[oppositeDirectionIndex] == DirectionType.Wall && directionType == DirectionType.Door)
+            {
+                conflict = true;
+            }
+            else if (directionTypes[oppositeDirectionIndex] == DirectionType.Hallway && directionType == DirectionType.Wall)
+            {
+                conflict = true;
+            }
+            else if (directionTypes[oppositeDirectionIndex] == DirectionType.Wall && directionType == DirectionType.Hallway)
+            {
+                conflict = true;
             }
 
         }
 
-        return conflictType; 
+        return conflict;
+
     }
 
     public void RotateRoom(RotateDirection direction)
