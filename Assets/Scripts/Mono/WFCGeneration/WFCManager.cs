@@ -24,6 +24,8 @@ public class WFCManager : MonoBehaviour
         while (!generationComplete)
         {
 
+            Debug.Log("Selecting next room...");
+
             wfcGenerator.SelectNextRoom();
 
             if (wfcGenerator.failed)

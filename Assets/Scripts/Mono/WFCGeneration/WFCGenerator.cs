@@ -107,6 +107,7 @@ public class WFCGenerator : MonoBehaviour
             int randomRoomIndex = Random.Range(0, cells[cellIndex].possibleRooms.Count);
             cells[cellIndex].room = cells[cellIndex].possibleRooms[randomRoomIndex];
             cells[cellIndex].collapsed = true;
+            cells[cellIndex].possibleRooms = new List<Rooms> { cells[cellIndex].room };
             CheckForConflicts();
         }
         else
@@ -115,6 +116,7 @@ public class WFCGenerator : MonoBehaviour
             int randomRoomIndex = Random.Range(0, cells[randomCellIndex].possibleRooms.Count);
             cells[randomCellIndex].room = cells[randomCellIndex].possibleRooms[randomRoomIndex];
             cells[randomCellIndex].collapsed = true;
+            cells[randomCellIndex].possibleRooms = new List<Rooms> { cells[randomCellIndex].room };
             CheckForConflicts();
         }
 
@@ -128,6 +130,7 @@ public class WFCGenerator : MonoBehaviour
         for (int i = 0; i < cells.Count; i++)
         {
 
+<<<<<<< Updated upstream
             // Skip the cell if it is already collapsed, as we only need to check for conflicts in uncollapsed cells.
             if (cells[i].collapsed)
             {
@@ -135,6 +138,8 @@ public class WFCGenerator : MonoBehaviour
             }
 
             // Check if the current cell has any possible rooms left. If not, log an error and set the failed flag to true.
+=======
+>>>>>>> Stashed changes
             if (cells[i].possibleRooms.Count == 0)
             {
                 Debug.LogError("No possible rooms for cell at index: " + i);
@@ -160,6 +165,14 @@ public class WFCGenerator : MonoBehaviour
                 {
                     if (tempCells.possibleRooms[j].CheckDirectionConflicts(i - 1, tempCells.possibleRooms[j].directionTypes[3]))
                     {
+
+                        if (cells[i - 1].collapsed)
+                        {
+                            Debug.LogError("Cell at index: " + (i - 1) + " is already collapsed. Cannot remove possible room.");
+                            failed = true;
+                            break;
+                        }
+
                         cells[i - 1].possibleRooms.Remove(tempCells.possibleRooms[j]);
                         j--;
 
@@ -191,8 +204,16 @@ public class WFCGenerator : MonoBehaviour
                 {
                     if (tempCells.possibleRooms[j].CheckDirectionConflicts(i + 1, tempCells.possibleRooms[j].directionTypes[2]))
                     {
+                        if (cells[i + 1].collapsed)
+                        {
+                            Debug.LogError("Cell at index: " + (i + 1) + " is already collapsed. Cannot remove possible room.");
+                            failed = true;
+                            break;
+                        }
+
                         cells[i + 1].possibleRooms.Remove(tempCells.possibleRooms[j]);
                         j--;
+
                         if (cells[i + 1].possibleRooms.Count == 1)
                         {
                             cells[i + 1].room = cells[i + 1].possibleRooms[0];
@@ -220,8 +241,16 @@ public class WFCGenerator : MonoBehaviour
                 {
                     if (tempCells.possibleRooms[j].CheckDirectionConflicts(i - (int)GRID_SIZE.x, tempCells.possibleRooms[j].directionTypes[0]))
                     {
+                        if (cells[i - 1].collapsed)
+                        {
+                            Debug.LogError("Cell at index: " + (i - 1) + " is already collapsed. Cannot remove possible room.");
+                            failed = true;
+                            break;
+                        }
+
                         cells[i - (int)GRID_SIZE.x].possibleRooms.Remove(tempCells.possibleRooms[j]);
                         j--;
+
                         if (cells[i - (int)GRID_SIZE.x].possibleRooms.Count == 1)
                         {
                             cells[i - (int)GRID_SIZE.x].room = cells[i - (int)GRID_SIZE.x].possibleRooms[0];
