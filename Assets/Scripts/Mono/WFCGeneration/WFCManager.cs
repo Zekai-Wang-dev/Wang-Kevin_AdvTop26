@@ -15,6 +15,7 @@ public class WFCManager : MonoBehaviour
 
     }
 
+    // Method to start the generation process by checking for uncollapsed cells and selecting the next room until the generation is complete or fails.
     public void StartGeneration()
     {
 
