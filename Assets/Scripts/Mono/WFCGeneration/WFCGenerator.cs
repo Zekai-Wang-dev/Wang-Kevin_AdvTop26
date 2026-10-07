@@ -130,12 +130,6 @@ public class WFCGenerator : MonoBehaviour
         for (int i = 0; i < cells.Count; i++)
         {
 
-            // Skip the cell if it is already collapsed, as we only need to check for conflicts in uncollapsed cells.
-            if (cells[i].collapsed)
-            {
-                continue;
-            }
-
             // Check if the current cell has any possible rooms left. If not, log an error and set the failed flag to true.
             if (cells[i].possibleRooms.Count == 0)
             {
@@ -177,12 +171,14 @@ public class WFCGenerator : MonoBehaviour
                     {
                         tempCells.possibleRooms.Remove(tempCells.possibleRooms[j]);
                         j--;
-                        if (tempCells.possibleRooms.Count == 1)
-                        {
-                            tempCells.room = tempCells.possibleRooms[0];
-                            tempCells.collapsed = true;
-                        }
+                        
                     }
+                }
+
+                if (tempCells.possibleRooms.Count == 1)
+                {
+                    tempCells.room = tempCells.possibleRooms[0];
+                    tempCells.collapsed = true;
                 }
             }
 
@@ -217,14 +213,15 @@ public class WFCGenerator : MonoBehaviour
                     {
                         tempCells.possibleRooms.Remove(tempCells.possibleRooms[j]);
                         j--;
-                        if (tempCells.possibleRooms.Count == 1)
-                        {
-                                tempCells.room = tempCells.possibleRooms[0];
-                                tempCells.collapsed = true;
-                            
-                        }
+                        
                     }
          
+                }
+                if (tempCells.possibleRooms.Count == 1)
+                {
+                    tempCells.room = tempCells.possibleRooms[0];
+                    tempCells.collapsed = true;
+
                 }
 
             }
@@ -259,16 +256,16 @@ public class WFCGenerator : MonoBehaviour
                     {
                         tempCells.possibleRooms.Remove(tempCells.possibleRooms[j]);
                         j--;
-                        if (tempCells.possibleRooms.Count == 1)
-                        {
-                                tempCells.room = tempCells.possibleRooms[0];
-                                tempCells.collapsed = true;
-                            
-                        }
+                        
                     }
  
                 }
+                if (tempCells.possibleRooms.Count == 1)
+                {
+                    tempCells.room = tempCells.possibleRooms[0];
+                    tempCells.collapsed = true;
 
+                }
             }
 
             // Check for conflicts with the bottom adjacent cell (if it exists).
@@ -302,16 +299,17 @@ public class WFCGenerator : MonoBehaviour
                     {
                         tempCells.possibleRooms.Remove(tempCells.possibleRooms[j]);
                         j--;
-                        if (tempCells.possibleRooms.Count == 1)
-                        {
-                                tempCells.room = tempCells.possibleRooms[0];
-                                tempCells.collapsed = true;
-                            
-                        }
+                        
                     }
 
                 }
-   
+                if (tempCells.possibleRooms.Count == 1)
+                {
+                    tempCells.room = tempCells.possibleRooms[0];
+                    tempCells.collapsed = true;
+
+                }
+
             }
 
         }
