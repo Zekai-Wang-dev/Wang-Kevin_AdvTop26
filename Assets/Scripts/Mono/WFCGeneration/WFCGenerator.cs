@@ -160,7 +160,7 @@ public class WFCGenerator : MonoBehaviour
                 // Iterate through the possible rooms of the left adjacent cell and check for direction conflicts with the current cell. If a conflict is found, remove the conflicting room from the left adjacent cell's possible rooms.
                 for (int j = 0; j < tempCells.possibleRooms.Count; j++)
                 {
-                    if (tempCells.possibleRooms[j].CheckDirectionConflicts(i - 1, tempCells.possibleRooms[j].directionTypes[3]))
+                    if (tempCells.possibleRooms[j].CheckDirectionConflicts(3, tempCells.possibleRooms[j].directionTypes[3]))
                     {
 
                         if (cells[i - 1].collapsed)
@@ -199,7 +199,7 @@ public class WFCGenerator : MonoBehaviour
                 // Iterate through the possible rooms of the right adjacent cell and check for direction conflicts with the current cell. If a conflict is found, remove the conflicting room from the right adjacent cell's possible rooms.
                 for (int j = 0; j < tempCells.possibleRooms.Count; j++)
                 {
-                    if (tempCells.possibleRooms[j].CheckDirectionConflicts(i + 1, tempCells.possibleRooms[j].directionTypes[2]))
+                    if (tempCells.possibleRooms[j].CheckDirectionConflicts(2, tempCells.possibleRooms[j].directionTypes[2]))
                     {
                         if (cells[i + 1].collapsed)
                         {
@@ -236,7 +236,7 @@ public class WFCGenerator : MonoBehaviour
                 // Iterate through the possible rooms of the top adjacent cell and check for direction conflicts with the current cell. If a conflict is found, remove the conflicting room from the top adjacent cell's possible rooms.
                 for (int j = 0; j < tempCells.possibleRooms.Count; j++)
                 {
-                    if (tempCells.possibleRooms[j].CheckDirectionConflicts(i - (int)GRID_SIZE.x, tempCells.possibleRooms[j].directionTypes[0]))
+                    if (tempCells.possibleRooms[j].CheckDirectionConflicts(0, tempCells.possibleRooms[j].directionTypes[0]))
                     {
                         if (cells[i - (int)GRID_SIZE.x].collapsed)
                         {
@@ -274,7 +274,7 @@ public class WFCGenerator : MonoBehaviour
                 // Iterate through the possible rooms of the bottom adjacent cell and check for direction conflicts with the current cell. If a conflict is found, remove the conflicting room from the bottom adjacent cell's possible rooms.
                 for (int j = 0; j < tempCells.possibleRooms.Count; j++)
                 {
-                    if (tempCells.possibleRooms[j].CheckDirectionConflicts(i + (int)GRID_SIZE.x, tempCells.possibleRooms[j].directionTypes[1]))
+                    if (tempCells.possibleRooms[j].CheckDirectionConflicts(1, tempCells.possibleRooms[j].directionTypes[1]))
                     {
                         cells[i + (int)GRID_SIZE.x].possibleRooms.Remove(tempCells.possibleRooms[j]);
                         j--;

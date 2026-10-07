@@ -40,6 +40,8 @@ public class WFCManager : MonoBehaviour
 
         }
 
+        Debug.Log("Generation complete.");
+
     }
 
 }
