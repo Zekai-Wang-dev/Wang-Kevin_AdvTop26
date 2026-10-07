@@ -159,7 +159,7 @@ public class WFCGenerator : MonoBehaviour
 
                     for (int k = 0; k < cells[i].possibleRooms.Count; k++)
                     {
-                        if (!cells[i].possibleRooms[k].CheckDirectionConflicts(3, tempCells.possibleRooms[j].directionTypes[3]))
+                        if (!tempCells.possibleRooms[j].CheckDirectionConflicts(3, cells[i].possibleRooms[k].directionTypes[1]))
                         {
 
                             supported = true; 
@@ -173,6 +173,12 @@ public class WFCGenerator : MonoBehaviour
                         j--;
                         
                     }
+                }
+
+                if (tempCells.possibleRooms.Count == 0)
+                {
+                    failed = true;
+                    return;
                 }
 
                 if (tempCells.possibleRooms.Count == 1)
@@ -203,7 +209,7 @@ public class WFCGenerator : MonoBehaviour
                     for (int k = 0; k < cells[i].possibleRooms.Count; k++)
                     {
 
-                        if (!cells[i].possibleRooms[k].CheckDirectionConflicts(2, tempCells.possibleRooms[j].directionTypes[2]))
+                        if (!tempCells.possibleRooms[j].CheckDirectionConflicts(2, cells[i].possibleRooms[k].directionTypes[3]))
                         {
                             supported = true;
                         }
@@ -217,6 +223,13 @@ public class WFCGenerator : MonoBehaviour
                     }
          
                 }
+
+                if (tempCells.possibleRooms.Count == 0)
+                {
+                    failed = true;
+                    return;
+                }
+
                 if (tempCells.possibleRooms.Count == 1)
                 {
                     tempCells.room = tempCells.possibleRooms[0];
@@ -246,7 +259,7 @@ public class WFCGenerator : MonoBehaviour
 
                     for (int k = 0; k < cells[i].possibleRooms.Count; k++)
                     {
-                        if (!cells[i].possibleRooms[k].CheckDirectionConflicts(0, tempCells.possibleRooms[j].directionTypes[0]))
+                        if (!tempCells.possibleRooms[j].CheckDirectionConflicts(0, cells[i].possibleRooms[k].directionTypes[2]))
                         {
                             supported = true;
                         }
@@ -260,6 +273,13 @@ public class WFCGenerator : MonoBehaviour
                     }
  
                 }
+
+                if (tempCells.possibleRooms.Count == 0)
+                {
+                    failed = true;
+                    return;
+                }
+
                 if (tempCells.possibleRooms.Count == 1)
                 {
                     tempCells.room = tempCells.possibleRooms[0];
@@ -289,7 +309,7 @@ public class WFCGenerator : MonoBehaviour
 
                     for (int k = 0; k < cells[i].possibleRooms.Count; k++)
                     {
-                        if (!cells[i].possibleRooms[k].CheckDirectionConflicts(1, tempCells.possibleRooms[j].directionTypes[1]))
+                        if (!tempCells.possibleRooms[j].CheckDirectionConflicts(1, cells[i].possibleRooms[k].directionTypes[0]))
                         {
                             supported = true;
                         }
@@ -303,6 +323,13 @@ public class WFCGenerator : MonoBehaviour
                     }
 
                 }
+
+                if (tempCells.possibleRooms.Count == 0)
+                {
+                    failed = true;
+                    return;
+                }
+
                 if (tempCells.possibleRooms.Count == 1)
                 {
                     tempCells.room = tempCells.possibleRooms[0];
