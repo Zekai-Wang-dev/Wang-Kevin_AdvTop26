@@ -110,10 +110,26 @@ public class WFCGenerator : MonoBehaviour
             cells[cellIndex].possibleRooms = new List<Rooms> { cells[cellIndex].room };
             CheckForConflicts();
         }
-        else
+        else 
         {
             int randomCellIndex = Random.Range(0, cells.Count);
             int randomRoomIndex = Random.Range(0, cells[randomCellIndex].possibleRooms.Count);
+
+            bool foundUncollapsedCell = false;
+
+            while (foundUncollapsedCell == false)
+            {
+                if (!cells[randomCellIndex].collapsed)
+                {
+                    foundUncollapsedCell = true;
+                }
+                else
+                {
+                    randomCellIndex = Random.Range(0, cells.Count);
+                    randomRoomIndex = Random.Range(0, cells[randomCellIndex].possibleRooms.Count);
+                }
+            }
+
             cells[randomCellIndex].room = cells[randomCellIndex].possibleRooms[randomRoomIndex];
             cells[randomCellIndex].collapsed = true;
             cells[randomCellIndex].possibleRooms = new List<Rooms> { cells[randomCellIndex].room };
@@ -166,7 +182,7 @@ public class WFCGenerator : MonoBehaviour
 
                         for (int k = 0; k < cells[i].possibleRooms.Count; k++)
                         {
-                            if (!tempCells.possibleRooms[j].CheckDirectionConflicts(1, cells[i].possibleRooms[k].directionTypes[1]))
+                            if (!tempCells.possibleRooms[j].CheckDirectionConflicts(3, cells[i].possibleRooms[k].directionTypes[3]))
                             {
 
                                 supported = true;
@@ -203,7 +219,7 @@ public class WFCGenerator : MonoBehaviour
 
                     if (tempCells.possibleRooms.Count == 0)
                     {
-                        Debug.LogError("No possible rooms for cell at index: " + (i - 1));
+                        Debug.LogError("No possible rooms for cell at index: " + (i + 1));
                         failed = true;
                         break;
                     }
@@ -217,7 +233,7 @@ public class WFCGenerator : MonoBehaviour
                         for (int k = 0; k < cells[i].possibleRooms.Count; k++)
                         {
 
-                            if (!tempCells.possibleRooms[j].CheckDirectionConflicts(3, cells[i].possibleRooms[k].directionTypes[3]))
+                            if (!tempCells.possibleRooms[j].CheckDirectionConflicts(1, cells[i].possibleRooms[k].directionTypes[1]))
                             {
                                 supported = true;
                             }
@@ -255,7 +271,7 @@ public class WFCGenerator : MonoBehaviour
 
                     if (tempCells.possibleRooms.Count == 0)
                     {
-                        Debug.LogError("No possible rooms for cell at index: " + (i - 1));
+                        Debug.LogError("No possible rooms for cell at index: " + (i - (int)GRID_SIZE.x));
                         failed = true;
                         break;
                     }
@@ -268,7 +284,7 @@ public class WFCGenerator : MonoBehaviour
 
                         for (int k = 0; k < cells[i].possibleRooms.Count; k++)
                         {
-                            if (!tempCells.possibleRooms[j].CheckDirectionConflicts(2, cells[i].possibleRooms[k].directionTypes[2]))
+                            if (!tempCells.possibleRooms[j].CheckDirectionConflicts(0, cells[i].possibleRooms[k].directionTypes[0]))
                             {
                                 supported = true;
                             }
@@ -306,7 +322,7 @@ public class WFCGenerator : MonoBehaviour
 
                     if (tempCells.possibleRooms.Count == 0)
                     {
-                        Debug.LogError("No possible rooms for cell at index: " + (i - 1));
+                        Debug.LogError("No possible rooms for cell at index: " + (i + (int)GRID_SIZE.x));
                         failed = true;
                         break;
                     }
@@ -319,7 +335,7 @@ public class WFCGenerator : MonoBehaviour
 
                         for (int k = 0; k < cells[i].possibleRooms.Count; k++)
                         {
-                            if (!tempCells.possibleRooms[j].CheckDirectionConflicts(0, cells[i].possibleRooms[k].directionTypes[0]))
+                            if (!tempCells.possibleRooms[j].CheckDirectionConflicts(2, cells[i].possibleRooms[k].directionTypes[2]))
                             {
                                 supported = true;
                             }
