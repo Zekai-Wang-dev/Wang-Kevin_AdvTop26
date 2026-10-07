@@ -126,214 +126,227 @@ public class WFCGenerator : MonoBehaviour
     public void CheckForConflicts()
     {
 
-        // Iterate through all cells to check for conflicts with adjacent cells.
-        for (int i = 0; i < cells.Count; i++)
+        bool changed = true; 
+
+        while (changed)
         {
 
-            // Check if the current cell has any possible rooms left. If not, log an error and set the failed flag to true.
-            if (cells[i].possibleRooms.Count == 0)
-            {
-                Debug.LogError("No possible rooms for cell at index: " + i);
-                failed = true;
-                break; 
-            }
+            changed = false;
 
-            // Check for conflicts with the left adjacent cell (if it exists).
-            if (i % (int)GRID_SIZE.x != 0)
+            // Iterate through all cells to check for conflicts with adjacent cells.
+            for (int i = 0; i < cells.Count; i++)
             {
 
-                Cells tempCells = cells[i - 1];
-
-                if (tempCells.possibleRooms.Count == 0)
+                // Check if the current cell has any possible rooms left. If not, log an error and set the failed flag to true.
+                if (cells[i].possibleRooms.Count == 0)
                 {
-                    Debug.LogError("No possible rooms for cell at index: " + (i - 1));
+                    Debug.LogError("No possible rooms for cell at index: " + i);
                     failed = true;
                     break;
                 }
 
-                // Iterate through the possible rooms of the left adjacent cell and check for direction conflicts with the current cell. If a conflict is found, remove the conflicting room from the left adjacent cell's possible rooms.
-                for (int j = 0; j < tempCells.possibleRooms.Count; j++)
+                // Check for conflicts with the left adjacent cell (if it exists).
+                if (i % (int)GRID_SIZE.x != 0)
                 {
 
-                    bool supported = false; 
+                    Cells tempCells = cells[i - 1];
 
-                    for (int k = 0; k < cells[i].possibleRooms.Count; k++)
+                    if (tempCells.possibleRooms.Count == 0)
                     {
-                        if (!tempCells.possibleRooms[j].CheckDirectionConflicts(3, cells[i].possibleRooms[k].directionTypes[1]))
-                        {
+                        Debug.LogError("No possible rooms for cell at index: " + (i - 1));
+                        failed = true;
+                        break;
+                    }
 
-                            supported = true; 
+                    // Iterate through the possible rooms of the left adjacent cell and check for direction conflicts with the current cell. If a conflict is found, remove the conflicting room from the left adjacent cell's possible rooms.
+                    for (int j = 0; j < tempCells.possibleRooms.Count; j++)
+                    {
+
+                        bool supported = false;
+
+                        for (int k = 0; k < cells[i].possibleRooms.Count; k++)
+                        {
+                            if (!tempCells.possibleRooms[j].CheckDirectionConflicts(1, cells[i].possibleRooms[k].directionTypes[1]))
+                            {
+
+                                supported = true;
+
+                            }
+                        }
+
+                        if (supported == false)
+                        {
+                            tempCells.possibleRooms.Remove(tempCells.possibleRooms[j]);
+                            changed = true;
+                            j--;
 
                         }
                     }
 
-                    if (supported == false)
+                    if (tempCells.possibleRooms.Count == 0)
                     {
-                        tempCells.possibleRooms.Remove(tempCells.possibleRooms[j]);
-                        j--;
-                        
+                        failed = true;
+                        return;
+                    }
+
+                    if (tempCells.possibleRooms.Count == 1)
+                    {
+                        tempCells.room = tempCells.possibleRooms[0];
+                        tempCells.collapsed = true;
                     }
                 }
 
-                if (tempCells.possibleRooms.Count == 0)
+                // Check for conflicts with the right adjacent cell (if it exists).
+                if (i % (int)GRID_SIZE.x != (int)GRID_SIZE.x - 1)
                 {
-                    failed = true;
-                    return;
-                }
+                    Cells tempCells = cells[i + 1];
 
-                if (tempCells.possibleRooms.Count == 1)
-                {
-                    tempCells.room = tempCells.possibleRooms[0];
-                    tempCells.collapsed = true;
-                }
-            }
+                    if (tempCells.possibleRooms.Count == 0)
+                    {
+                        Debug.LogError("No possible rooms for cell at index: " + (i - 1));
+                        failed = true;
+                        break;
+                    }
 
-            // Check for conflicts with the right adjacent cell (if it exists).
-            if (i % (int)GRID_SIZE.x != (int)GRID_SIZE.x - 1)
-            {
-                Cells tempCells = cells[i + 1];
-
-                if (tempCells.possibleRooms.Count == 0)
-                {
-                    Debug.LogError("No possible rooms for cell at index: " + (i - 1));
-                    failed = true;
-                    break;
-                }
-
-                // Iterate through the possible rooms of the right adjacent cell and check for direction conflicts with the current cell. If a conflict is found, remove the conflicting room from the right adjacent cell's possible rooms.
-                for (int j = 0; j < tempCells.possibleRooms.Count; j++)
-                {
-
-                    bool supported = false;
-
-                    for (int k = 0; k < cells[i].possibleRooms.Count; k++)
+                    // Iterate through the possible rooms of the right adjacent cell and check for direction conflicts with the current cell. If a conflict is found, remove the conflicting room from the right adjacent cell's possible rooms.
+                    for (int j = 0; j < tempCells.possibleRooms.Count; j++)
                     {
 
-                        if (!tempCells.possibleRooms[j].CheckDirectionConflicts(2, cells[i].possibleRooms[k].directionTypes[3]))
+                        bool supported = false;
+
+                        for (int k = 0; k < cells[i].possibleRooms.Count; k++)
                         {
-                            supported = true;
+
+                            if (!tempCells.possibleRooms[j].CheckDirectionConflicts(3, cells[i].possibleRooms[k].directionTypes[3]))
+                            {
+                                supported = true;
+                            }
                         }
-                    }
 
-                    if (supported == false)
-                    {
-                        tempCells.possibleRooms.Remove(tempCells.possibleRooms[j]);
-                        j--;
-                        
-                    }
-         
-                }
-
-                if (tempCells.possibleRooms.Count == 0)
-                {
-                    failed = true;
-                    return;
-                }
-
-                if (tempCells.possibleRooms.Count == 1)
-                {
-                    tempCells.room = tempCells.possibleRooms[0];
-                    tempCells.collapsed = true;
-
-                }
-
-            }
-
-            // Check for conflicts with the top adjacent cell (if it exists).
-            if (i / (int)GRID_SIZE.x != 0)
-            {
-                Cells tempCells = cells[i - (int)GRID_SIZE.x];
-
-                if (tempCells.possibleRooms.Count == 0)
-                {
-                    Debug.LogError("No possible rooms for cell at index: " + (i - 1));
-                    failed = true;
-                    break;
-                }
-
-                // Iterate through the possible rooms of the top adjacent cell and check for direction conflicts with the current cell. If a conflict is found, remove the conflicting room from the top adjacent cell's possible rooms.
-                for (int j = 0; j < tempCells.possibleRooms.Count; j++)
-                {
-
-                    bool supported = false; 
-
-                    for (int k = 0; k < cells[i].possibleRooms.Count; k++)
-                    {
-                        if (!tempCells.possibleRooms[j].CheckDirectionConflicts(0, cells[i].possibleRooms[k].directionTypes[2]))
+                        if (supported == false)
                         {
-                            supported = true;
+                            tempCells.possibleRooms.Remove(tempCells.possibleRooms[j]);
+                            changed = true;
+                            j--;
+
                         }
+
                     }
 
-                    if (supported == false)
+                    if (tempCells.possibleRooms.Count == 0)
                     {
-                        tempCells.possibleRooms.Remove(tempCells.possibleRooms[j]);
-                        j--;
-                        
+                        failed = true;
+                        return;
                     }
- 
-                }
 
-                if (tempCells.possibleRooms.Count == 0)
-                {
-                    failed = true;
-                    return;
-                }
-
-                if (tempCells.possibleRooms.Count == 1)
-                {
-                    tempCells.room = tempCells.possibleRooms[0];
-                    tempCells.collapsed = true;
-
-                }
-            }
-
-            // Check for conflicts with the bottom adjacent cell (if it exists).
-            if (i / (int)GRID_SIZE.x != (int)GRID_SIZE.y - 1)
-            {
-
-                Cells tempCells = cells[i + (int)GRID_SIZE.x];
-
-                if (tempCells.possibleRooms.Count == 0)
-                {
-                    Debug.LogError("No possible rooms for cell at index: " + (i - 1));
-                    failed = true;
-                    break;
-                }
-
-                // Iterate through the possible rooms of the bottom adjacent cell and check for direction conflicts with the current cell. If a conflict is found, remove the conflicting room from the bottom adjacent cell's possible rooms.
-                for (int j = 0; j < tempCells.possibleRooms.Count; j++)
-                {
-
-                    bool supported = false;
-
-                    for (int k = 0; k < cells[i].possibleRooms.Count; k++)
+                    if (tempCells.possibleRooms.Count == 1)
                     {
-                        if (!tempCells.possibleRooms[j].CheckDirectionConflicts(1, cells[i].possibleRooms[k].directionTypes[0]))
+                        tempCells.room = tempCells.possibleRooms[0];
+                        tempCells.collapsed = true;
+
+                    }
+
+                }
+
+                // Check for conflicts with the top adjacent cell (if it exists).
+                if (i / (int)GRID_SIZE.x != 0)
+                {
+                    Cells tempCells = cells[i - (int)GRID_SIZE.x];
+
+                    if (tempCells.possibleRooms.Count == 0)
+                    {
+                        Debug.LogError("No possible rooms for cell at index: " + (i - 1));
+                        failed = true;
+                        break;
+                    }
+
+                    // Iterate through the possible rooms of the top adjacent cell and check for direction conflicts with the current cell. If a conflict is found, remove the conflicting room from the top adjacent cell's possible rooms.
+                    for (int j = 0; j < tempCells.possibleRooms.Count; j++)
+                    {
+
+                        bool supported = false;
+
+                        for (int k = 0; k < cells[i].possibleRooms.Count; k++)
                         {
-                            supported = true;
+                            if (!tempCells.possibleRooms[j].CheckDirectionConflicts(2, cells[i].possibleRooms[k].directionTypes[2]))
+                            {
+                                supported = true;
+                            }
                         }
+
+                        if (supported == false)
+                        {
+                            tempCells.possibleRooms.Remove(tempCells.possibleRooms[j]);
+                            changed = true;
+                            j--;
+
+                        }
+
                     }
 
-                    if (supported == false)
+                    if (tempCells.possibleRooms.Count == 0)
                     {
-                        tempCells.possibleRooms.Remove(tempCells.possibleRooms[j]);
-                        j--;
-                        
+                        failed = true;
+                        return;
                     }
 
+                    if (tempCells.possibleRooms.Count == 1)
+                    {
+                        tempCells.room = tempCells.possibleRooms[0];
+                        tempCells.collapsed = true;
+
+                    }
                 }
 
-                if (tempCells.possibleRooms.Count == 0)
+                // Check for conflicts with the bottom adjacent cell (if it exists).
+                if (i / (int)GRID_SIZE.x != (int)GRID_SIZE.y - 1)
                 {
-                    failed = true;
-                    return;
-                }
 
-                if (tempCells.possibleRooms.Count == 1)
-                {
-                    tempCells.room = tempCells.possibleRooms[0];
-                    tempCells.collapsed = true;
+                    Cells tempCells = cells[i + (int)GRID_SIZE.x];
+
+                    if (tempCells.possibleRooms.Count == 0)
+                    {
+                        Debug.LogError("No possible rooms for cell at index: " + (i - 1));
+                        failed = true;
+                        break;
+                    }
+
+                    // Iterate through the possible rooms of the bottom adjacent cell and check for direction conflicts with the current cell. If a conflict is found, remove the conflicting room from the bottom adjacent cell's possible rooms.
+                    for (int j = 0; j < tempCells.possibleRooms.Count; j++)
+                    {
+
+                        bool supported = false;
+
+                        for (int k = 0; k < cells[i].possibleRooms.Count; k++)
+                        {
+                            if (!tempCells.possibleRooms[j].CheckDirectionConflicts(0, cells[i].possibleRooms[k].directionTypes[0]))
+                            {
+                                supported = true;
+                            }
+                        }
+
+                        if (supported == false)
+                        {
+                            tempCells.possibleRooms.Remove(tempCells.possibleRooms[j]);
+                            changed = true; 
+                            j--;
+
+                        }
+
+                    }
+
+                    if (tempCells.possibleRooms.Count == 0)
+                    {
+                        failed = true;
+                        return;
+                    }
+
+                    if (tempCells.possibleRooms.Count == 1)
+                    {
+                        tempCells.room = tempCells.possibleRooms[0];
+                        tempCells.collapsed = true;
+
+                    }
 
                 }
 
