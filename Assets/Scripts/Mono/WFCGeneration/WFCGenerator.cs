@@ -130,7 +130,6 @@ public class WFCGenerator : MonoBehaviour
         for (int i = 0; i < cells.Count; i++)
         {
 
-<<<<<<< Updated upstream
             // Skip the cell if it is already collapsed, as we only need to check for conflicts in uncollapsed cells.
             if (cells[i].collapsed)
             {
@@ -138,8 +137,6 @@ public class WFCGenerator : MonoBehaviour
             }
 
             // Check if the current cell has any possible rooms left. If not, log an error and set the failed flag to true.
-=======
->>>>>>> Stashed changes
             if (cells[i].possibleRooms.Count == 0)
             {
                 Debug.LogError("No possible rooms for cell at index: " + i);
