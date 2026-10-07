@@ -238,9 +238,9 @@ public class WFCGenerator : MonoBehaviour
                 {
                     if (tempCells.possibleRooms[j].CheckDirectionConflicts(i - (int)GRID_SIZE.x, tempCells.possibleRooms[j].directionTypes[0]))
                     {
-                        if (cells[i - 1].collapsed)
+                        if (cells[i - (int)GRID_SIZE.x].collapsed)
                         {
-                            Debug.LogError("Cell at index: " + (i - 1) + " is already collapsed. Cannot remove possible room.");
+                            Debug.LogError("Cell at index: " + (i - (int)GRID_SIZE.x) + " is already collapsed. Cannot remove possible room.");
                             failed = true;
                             break;
                         }
