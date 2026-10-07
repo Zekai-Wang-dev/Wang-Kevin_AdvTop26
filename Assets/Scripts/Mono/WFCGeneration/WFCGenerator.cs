@@ -160,22 +160,30 @@ public class WFCGenerator : MonoBehaviour
                 // Iterate through the possible rooms of the left adjacent cell and check for direction conflicts with the current cell. If a conflict is found, remove the conflicting room from the left adjacent cell's possible rooms.
                 for (int j = 0; j < tempCells.possibleRooms.Count; j++)
                 {
+
+                    bool supported = false; 
+
                     for (int k = 0; k < cells[i].possibleRooms.Count; k++)
                     {
-                        if (cells[i].possibleRooms[k].CheckDirectionConflicts(3, tempCells.possibleRooms[j].directionTypes[3]))
+                        if (!cells[i].possibleRooms[k].CheckDirectionConflicts(3, tempCells.possibleRooms[j].directionTypes[3]))
                         {
-                            tempCells.possibleRooms.Remove(tempCells.possibleRooms[j]);
-                            j--;
-                            if (tempCells.possibleRooms.Count == 1)
-                            {
-                                tempCells.room = tempCells.possibleRooms[0];
-                                tempCells.collapsed = true;
-                            }
+
+                            supported = true; 
+
                         }
                     }
 
+                    if (supported == false)
+                    {
+                        tempCells.possibleRooms.Remove(tempCells.possibleRooms[j]);
+                        j--;
+                        if (tempCells.possibleRooms.Count == 1)
+                        {
+                            tempCells.room = tempCells.possibleRooms[0];
+                            tempCells.collapsed = true;
+                        }
+                    }
                 }
-
             }
 
             // Check for conflicts with the right adjacent cell (if it exists).
@@ -193,18 +201,27 @@ public class WFCGenerator : MonoBehaviour
                 // Iterate through the possible rooms of the right adjacent cell and check for direction conflicts with the current cell. If a conflict is found, remove the conflicting room from the right adjacent cell's possible rooms.
                 for (int j = 0; j < tempCells.possibleRooms.Count; j++)
                 {
+
+                    bool supported = false;
+
                     for (int k = 0; k < cells[i].possibleRooms.Count; k++)
                     {
 
-                        if (cells[i].possibleRooms[k].CheckDirectionConflicts(2, tempCells.possibleRooms[j].directionTypes[2]))
+                        if (!cells[i].possibleRooms[k].CheckDirectionConflicts(2, tempCells.possibleRooms[j].directionTypes[2]))
                         {
-                            tempCells.possibleRooms.Remove(tempCells.possibleRooms[j]);
-                            j--;
-                            if (tempCells.possibleRooms.Count == 1)
-                            {
+                            supported = true;
+                        }
+                    }
+
+                    if (supported == false)
+                    {
+                        tempCells.possibleRooms.Remove(tempCells.possibleRooms[j]);
+                        j--;
+                        if (tempCells.possibleRooms.Count == 1)
+                        {
                                 tempCells.room = tempCells.possibleRooms[0];
                                 tempCells.collapsed = true;
-                            }
+                            
                         }
                     }
          
@@ -227,17 +244,26 @@ public class WFCGenerator : MonoBehaviour
                 // Iterate through the possible rooms of the top adjacent cell and check for direction conflicts with the current cell. If a conflict is found, remove the conflicting room from the top adjacent cell's possible rooms.
                 for (int j = 0; j < tempCells.possibleRooms.Count; j++)
                 {
+
+                    bool supported = false; 
+
                     for (int k = 0; k < cells[i].possibleRooms.Count; k++)
                     {
-                        if (cells[i].possibleRooms[k].CheckDirectionConflicts(0, tempCells.possibleRooms[j].directionTypes[0]))
+                        if (!cells[i].possibleRooms[k].CheckDirectionConflicts(0, tempCells.possibleRooms[j].directionTypes[0]))
                         {
-                            tempCells.possibleRooms.Remove(tempCells.possibleRooms[j]);
-                            j--;
-                            if (tempCells.possibleRooms.Count == 1)
-                            {
+                            supported = true;
+                        }
+                    }
+
+                    if (supported == false)
+                    {
+                        tempCells.possibleRooms.Remove(tempCells.possibleRooms[j]);
+                        j--;
+                        if (tempCells.possibleRooms.Count == 1)
+                        {
                                 tempCells.room = tempCells.possibleRooms[0];
                                 tempCells.collapsed = true;
-                            }
+                            
                         }
                     }
  
@@ -261,17 +287,26 @@ public class WFCGenerator : MonoBehaviour
                 // Iterate through the possible rooms of the bottom adjacent cell and check for direction conflicts with the current cell. If a conflict is found, remove the conflicting room from the bottom adjacent cell's possible rooms.
                 for (int j = 0; j < tempCells.possibleRooms.Count; j++)
                 {
+
+                    bool supported = false;
+
                     for (int k = 0; k < cells[i].possibleRooms.Count; k++)
                     {
-                        if (cells[i].possibleRooms[k].CheckDirectionConflicts(1, tempCells.possibleRooms[j].directionTypes[1]))
+                        if (!cells[i].possibleRooms[k].CheckDirectionConflicts(1, tempCells.possibleRooms[j].directionTypes[1]))
                         {
-                            tempCells.possibleRooms.Remove(tempCells.possibleRooms[j]);
-                            j--;
-                            if (tempCells.possibleRooms.Count == 1)
-                            {
+                            supported = true;
+                        }
+                    }
+
+                    if (supported == false)
+                    {
+                        tempCells.possibleRooms.Remove(tempCells.possibleRooms[j]);
+                        j--;
+                        if (tempCells.possibleRooms.Count == 1)
+                        {
                                 tempCells.room = tempCells.possibleRooms[0];
                                 tempCells.collapsed = true;
-                            }
+                            
                         }
                     }
 
