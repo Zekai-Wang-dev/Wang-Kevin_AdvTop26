@@ -102,6 +102,7 @@ public class WFCGenerator : MonoBehaviour
                 {
                     startingIndex = i;
                     visitedCells[i] = true;
+                    i = cells.Count;
                     break;
 
                 }
@@ -117,13 +118,13 @@ public class WFCGenerator : MonoBehaviour
 
             int currentIndex = cellsToCheck.Dequeue();
 
-            foreach (DirectionType direction in cells[currentIndex].room.directionTypes)
+            for (int directionIndex = 0; directionIndex < 4; directionIndex++)
             {
-                if (direction == DirectionType.Door || direction == DirectionType.Hallway)
+                DirectionType currentDirection = cells[currentIndex].room.directionTypes[directionIndex];
+                if (currentDirection == DirectionType.Door || currentDirection == DirectionType.Hallway)
                 {
-                    int directionIndex = System.Array.IndexOf(cells[currentIndex].room.directionTypes, direction);
-                    int neighborX = currentIndex % (int)GRID_SIZE.x + dx[directionIndex];
-                    int neighborY = currentIndex / (int)GRID_SIZE.x + dy[directionIndex];
+                    int neighborX = (currentIndex % (int)GRID_SIZE.x) + dx[directionIndex];
+                    int neighborY = (currentIndex / (int)GRID_SIZE.x) + dy[directionIndex];
                     if (neighborX >= 0 && neighborX < GRID_SIZE.x && neighborY >= 0 && neighborY < GRID_SIZE.y)
                     {
                         int neighborIndex = neighborY * (int)GRID_SIZE.x + neighborX;
@@ -138,7 +139,15 @@ public class WFCGenerator : MonoBehaviour
 
         }
         while (cellsToCheck.Count > 0);
-       
+
+        for (int i = 0; i < visitedCells.Length; i++)
+        {
+            if (!visitedCells[i])
+            {
+                allConnected = false;
+                break; 
+            }
+        }
 
         return allConnected; 
 

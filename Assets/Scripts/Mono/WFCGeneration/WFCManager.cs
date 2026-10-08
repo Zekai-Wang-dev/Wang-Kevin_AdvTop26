@@ -40,7 +40,7 @@ public class WFCManager : MonoBehaviour
 
         }
 
-        if (!wfcGenerator.CheckAllRoomsConnectivity())
+        if (!wfcGenerator.CheckAllRoomsConnectivity() && generationComplete)
         {
 
             Debug.Log("Generation failed due to connectivity issues.");
@@ -48,8 +48,6 @@ public class WFCManager : MonoBehaviour
             StartGeneration();
 
         }
-
-        Debug.Log("Generation complete.");
 
     }
 
