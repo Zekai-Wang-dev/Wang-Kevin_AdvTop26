@@ -81,6 +81,69 @@ public class WFCGenerator : MonoBehaviour
 
     }
 
+    public bool CheckAllRoomsConnectivity()
+    {
+
+        bool allConnected = true;
+
+        int startingIndex = -1; 
+        int[] dx = new int[4] { 0, 1, 0, -1 }; 
+        int[] dy = new int[4] { -1, 0, 1, 0 };
+
+        bool[] visitedCells = new bool[cells.Count];
+
+        for (int i = 0; i < cells.Count; i++)
+        {
+
+            foreach (DirectionType direction in cells[i].room.directionTypes)
+            {
+
+                if (direction == DirectionType.Door || direction == DirectionType.Hallway)
+                {
+                    startingIndex = i;
+                    visitedCells[i] = true;
+                    break;
+
+                }
+            }
+        }
+
+        Queue<int> cellsToCheck = new Queue<int>();
+
+        cellsToCheck.Enqueue(startingIndex);
+
+        do
+        {
+
+            int currentIndex = cellsToCheck.Dequeue();
+
+            foreach (DirectionType direction in cells[currentIndex].room.directionTypes)
+            {
+                if (direction == DirectionType.Door || direction == DirectionType.Hallway)
+                {
+                    int directionIndex = System.Array.IndexOf(cells[currentIndex].room.directionTypes, direction);
+                    int neighborX = currentIndex % (int)GRID_SIZE.x + dx[directionIndex];
+                    int neighborY = currentIndex / (int)GRID_SIZE.x + dy[directionIndex];
+                    if (neighborX >= 0 && neighborX < GRID_SIZE.x && neighborY >= 0 && neighborY < GRID_SIZE.y)
+                    {
+                        int neighborIndex = neighborY * (int)GRID_SIZE.x + neighborX;
+                        if (!visitedCells[neighborIndex])
+                        {
+                            visitedCells[neighborIndex] = true;
+                            cellsToCheck.Enqueue(neighborIndex);
+                        }
+                    }
+                }
+            }
+
+        }
+        while (cellsToCheck.Count > 0);
+       
+
+        return allConnected; 
+
+    }
+
     public void RemovePossbilitiesFromOuterWallCells()
     {
 
