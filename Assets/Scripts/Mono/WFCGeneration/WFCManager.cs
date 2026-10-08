@@ -46,6 +46,9 @@ public class WFCManager : MonoBehaviour
         if (!wfcGenerator.CheckAllRoomsConnectivity())
         {
             Debug.Log("Generation failed due to connectivity issues.");
+            wfcGenerator.failed = true;
+            wfcGenerator.generationComplete = false;
+
             return;
         }
 
