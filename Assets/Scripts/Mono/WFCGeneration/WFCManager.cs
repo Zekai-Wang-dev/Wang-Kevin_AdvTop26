@@ -5,6 +5,8 @@ public class WFCManager : MonoBehaviour
 
     public WFCGenerator wfcGenerator;
 
+    public int retries = 0; 
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -32,6 +34,12 @@ public class WFCManager : MonoBehaviour
             {
 
                 Debug.Log("Generation failed.");
+                wfcGenerator.GenerateCells();
+                wfcGenerator.failed = false;
+                retries++;
+                Debug.Log("Retrying generation. Attempt: " + retries);
+                StartGeneration();
+                
                 break; 
 
             }

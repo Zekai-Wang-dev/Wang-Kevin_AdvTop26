@@ -48,6 +48,8 @@ public class WFCGenerator : MonoBehaviour
     public void GenerateCells()
     {
 
+        cells.Clear();
+
         for (int x = 0; x < GRID_SIZE.x; x++)
         {
             for (int y = 0; y < GRID_SIZE.y; y++)
