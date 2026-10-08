@@ -104,6 +104,7 @@ public class WFCGenerator : MonoBehaviour
         // If a cell with the lowest entropy is found, randomly select one of its possible rooms, collapse the cell, and check for conflicts with adjacent cells.
         if (cellIndex != -1)
         {
+            int randomCellIndex = Random.Range(0, cells.Count);
             int randomRoomIndex = Random.Range(0, cells[cellIndex].possibleRooms.Count);
             cells[cellIndex].room = cells[cellIndex].possibleRooms[randomRoomIndex];
             cells[cellIndex].collapsed = true;
@@ -116,20 +117,39 @@ public class WFCGenerator : MonoBehaviour
             int randomRoomIndex = Random.Range(0, cells[randomCellIndex].possibleRooms.Count);
 
             bool foundUncollapsedCell = false;
+            bool uncollapsedCellsExist = false; 
 
-            while (foundUncollapsedCell == false)
+            for (int i = 0; i < cells.Count; i++)
             {
-                if (!cells[randomCellIndex].collapsed)
+                if (!cells[i].collapsed)
                 {
-                    foundUncollapsedCell = true;
+                    uncollapsedCellsExist = true;
                 }
-                else
-                {
-                    randomCellIndex = Random.Range(0, cells.Count);
-                    randomRoomIndex = Random.Range(0, cells[randomCellIndex].possibleRooms.Count);
-                }
-            }
+            }   
 
+            if (!uncollapsedCellsExist)
+            {
+                generationComplete = true;
+                return;
+            }
+            else
+            {
+
+                while (foundUncollapsedCell == false)
+                {
+                    if (!cells[randomCellIndex].collapsed)
+                    {
+                        foundUncollapsedCell = true;
+                    }
+                    else
+                    {
+                        randomCellIndex = Random.Range(0, cells.Count);
+                        randomRoomIndex = Random.Range(0, cells[randomCellIndex].possibleRooms.Count);
+                    }
+                }
+
+            }
+            
             cells[randomCellIndex].room = cells[randomCellIndex].possibleRooms[randomRoomIndex];
             cells[randomCellIndex].collapsed = true;
             cells[randomCellIndex].possibleRooms = new List<Rooms> { cells[randomCellIndex].room };
