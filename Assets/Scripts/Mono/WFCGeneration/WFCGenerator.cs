@@ -58,6 +58,8 @@ public class WFCGenerator : MonoBehaviour
             }
         }
 
+        RemovePossbilitiesFromOuterWallCells();
+
     }
 
     // Method to check if all cells in the grid have been collapsed (i.e., assigned a room). If any cell is uncollapsed, it returns false; otherwise, it sets the generationComplete flag to true and returns true.
@@ -78,10 +80,37 @@ public class WFCGenerator : MonoBehaviour
 
     }
 
+    public void RemovePossbilitiesFromOuterWallCells()
+    {
+
+        int width = (int)GRID_SIZE.x;
+        int height = (int)GRID_SIZE.y;
+
+        for (int i = 0; i < cells.Count; i++)
+        {
+            int column = i % width;
+            int row = i / width;
+
+            cells[i].possibleRooms.RemoveAll(room =>
+                (row == 0 && room.directionTypes[0] != DirectionType.Wall) ||
+                (column == width - 1 && room.directionTypes[1] != DirectionType.Wall) ||
+                (row == height - 1 && room.directionTypes[2] != DirectionType.Wall) ||
+                (column == 0 && room.directionTypes[3] != DirectionType.Wall)
+            );
+
+            if (cells[i].possibleRooms.Count == 0)
+            {
+                failed = true;
+                Debug.LogError("No possible rooms for outer wall cell at index: " + i);
+                return;
+            }
+        }
+
+    }
+
     // Method to select the next cell to collapse based on the lowest entropy (i.e., the cell with the fewest possible rooms). If a cell with the lowest entropy is found, it randomly selects one of its possible rooms, collapses the cell, and checks for conflicts with adjacent cells. If no uncollapsed cells are found, it randomly selects a cell and collapses it.
     public void SelectNextRoom()
     {
-
 
         // Iterate through all cells to find the one with the lowest entropy (fewest possible rooms) that is not yet collapsed.
         int lowestEntropy = int.MaxValue;
@@ -126,6 +155,78 @@ public class WFCGenerator : MonoBehaviour
 
         CheckForConflicts();
 
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (cells == null || GRID_SIZE.x < 1)
+            return;
+
+        int width = (int)GRID_SIZE.x;
+
+        for (int i = 0; i < cells.Count; i++)
+        {
+            int column = i % width;
+            int row = i / width;
+
+            Vector3 position = transform.position + new Vector3(
+                GRID_OFFSET.x + column * CELL_SIZE.x,
+                0f,
+                GRID_OFFSET.y - row * CELL_SIZE.y
+            );
+
+            Cells cell = cells[i];
+
+            Gizmos.color = cell.possibleRooms.Count == 0
+                ? Color.red
+                : cell.collapsed ? Color.green : Color.gray;
+
+            Gizmos.DrawWireCube(
+                position,
+                new Vector3(CELL_SIZE.x, 0.1f, CELL_SIZE.y)
+            );
+
+            if (!cell.collapsed || cell.room == null)
+                continue;
+
+            float halfWidth = CELL_SIZE.x * 0.5f;
+            float halfDepth = CELL_SIZE.y * 0.5f;
+
+            Vector3 northWest = position + new Vector3(-halfWidth, 0, halfDepth);
+            Vector3 northEast = position + new Vector3(halfWidth, 0, halfDepth);
+            Vector3 southEast = position + new Vector3(halfWidth, 0, -halfDepth);
+            Vector3 southWest = position + new Vector3(-halfWidth, 0, -halfDepth);
+
+            // North
+            Gizmos.color = GetDirectionColor(cell.room.directionTypes[0]);
+            Gizmos.DrawLine(northWest, northEast);
+
+            // East
+            Gizmos.color = GetDirectionColor(cell.room.directionTypes[1]);
+            Gizmos.DrawLine(northEast, southEast);
+
+            // South
+            Gizmos.color = GetDirectionColor(cell.room.directionTypes[2]);
+            Gizmos.DrawLine(southEast, southWest);
+
+            // West
+            Gizmos.color = GetDirectionColor(cell.room.directionTypes[3]);
+            Gizmos.DrawLine(southWest, northWest);
+
+        }
+
+
+    }
+
+    private Color GetDirectionColor(DirectionType type)
+    {
+        switch (type)
+        {
+            case DirectionType.Wall: return Color.red;
+            case DirectionType.Door: return Color.yellow;
+            case DirectionType.Hallway: return Color.cyan;
+            default: return Color.gray;
+        }
     }
 
     // Method to check for conflicts between adjacent cells based on their possible rooms and direction types. If a conflict is found, it removes the conflicting room from the adjacent cell's possible rooms. If an adjacent cell is left with only one possible room, it collapses that cell as well. If any cell has no possible rooms left, it sets the failed flag to true and logs an error message.
