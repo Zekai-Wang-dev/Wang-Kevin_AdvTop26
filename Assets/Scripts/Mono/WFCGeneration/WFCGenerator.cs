@@ -82,80 +82,84 @@ public class WFCGenerator : MonoBehaviour
     public void SelectNextRoom()
     {
 
-        int lowestEntropy = possibleRooms.Count;
-        int cellIndex = -1;
 
         // Iterate through all cells to find the one with the lowest entropy (fewest possible rooms) that is not yet collapsed.
+        int lowestEntropy = int.MaxValue;
+        List<int> candidates = new List<int>();
+
+        for (int i = 0; i < cells.Count; i++)
+        {
+            if (cells[i].collapsed)
+                continue;
+
+            int entropy = cells[i].possibleRooms.Count;
+
+            if (entropy == 0)
+            {
+                failed = true;
+                return;
+            }
+
+            if (entropy < lowestEntropy)
+            {
+                lowestEntropy = entropy;
+                candidates.Clear();
+            }
+
+            if (entropy == lowestEntropy)
+                candidates.Add(i);
+        }
+
+        if (candidates.Count == 0)
+        {
+            generationComplete = true;
+            return;
+        }
+
+        int cellIndex = candidates[Random.Range(0, candidates.Count)];
+
+        int randomCellIndex = candidates[cellIndex];
+        int randomRoomIndex = Random.Range(0, cells[randomCellIndex].possibleRooms.Count);
+
+        bool foundUncollapsedCell = false;
+        bool uncollapsedCellsExist = false; 
+
         for (int i = 0; i < cells.Count; i++)
         {
             if (!cells[i].collapsed)
             {
-
-                if (cells[i].possibleRooms.Count < lowestEntropy)
-                {
-                    lowestEntropy = cells[i].possibleRooms.Count;
-                    cellIndex = i;
-                    Debug.Log("Lowest entropy found at cell index: " + cellIndex + " with entropy: " + lowestEntropy);
-                }
-
+                uncollapsedCellsExist = true;
             }
-        }
+        }   
 
-        // If a cell with the lowest entropy is found, randomly select one of its possible rooms, collapse the cell, and check for conflicts with adjacent cells.
-        if (cellIndex != -1)
+        if (!uncollapsedCellsExist)
         {
-            int randomCellIndex = Random.Range(0, cells.Count);
-            int randomRoomIndex = Random.Range(0, cells[cellIndex].possibleRooms.Count);
-            cells[cellIndex].room = cells[cellIndex].possibleRooms[randomRoomIndex];
-            cells[cellIndex].collapsed = true;
-            cells[cellIndex].possibleRooms = new List<Rooms> { cells[cellIndex].room };
-            CheckForConflicts();
+            generationComplete = true;
+            return;
         }
-        else 
+        else
         {
-            int randomCellIndex = Random.Range(0, cells.Count);
-            int randomRoomIndex = Random.Range(0, cells[randomCellIndex].possibleRooms.Count);
 
-            bool foundUncollapsedCell = false;
-            bool uncollapsedCellsExist = false; 
-
-            for (int i = 0; i < cells.Count; i++)
+            while (foundUncollapsedCell == false)
             {
-                if (!cells[i].collapsed)
+                if (!cells[randomCellIndex].collapsed)
                 {
-                    uncollapsedCellsExist = true;
+                    foundUncollapsedCell = true;
                 }
-            }   
-
-            if (!uncollapsedCellsExist)
-            {
-                generationComplete = true;
-                return;
-            }
-            else
-            {
-
-                while (foundUncollapsedCell == false)
+                else
                 {
-                    if (!cells[randomCellIndex].collapsed)
-                    {
-                        foundUncollapsedCell = true;
-                    }
-                    else
-                    {
-                        randomCellIndex = Random.Range(0, cells.Count);
-                        randomRoomIndex = Random.Range(0, cells[randomCellIndex].possibleRooms.Count);
-                    }
+                    randomCellIndex = candidates[Random.Range(0, candidates.Count)];
+                    randomRoomIndex = Random.Range(0, cells[randomCellIndex].possibleRooms.Count);
                 }
-
             }
+
+        }
             
-            cells[randomCellIndex].room = cells[randomCellIndex].possibleRooms[randomRoomIndex];
-            cells[randomCellIndex].collapsed = true;
-            cells[randomCellIndex].possibleRooms = new List<Rooms> { cells[randomCellIndex].room };
-            CheckForConflicts();
-        }
-
+        cells[randomCellIndex].room = cells[randomCellIndex].possibleRooms[randomRoomIndex];
+        cells[randomCellIndex].collapsed = true;
+        cells[randomCellIndex].possibleRooms = new List<Rooms> { cells[randomCellIndex].room };
+        CheckForConflicts();
+        
     }
 
     // Method to check for conflicts between adjacent cells based on their possible rooms and direction types. If a conflict is found, it removes the conflicting room from the adjacent cell's possible rooms. If an adjacent cell is left with only one possible room, it collapses that cell as well. If any cell has no possible rooms left, it sets the failed flag to true and logs an error message.
