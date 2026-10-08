@@ -59,6 +59,7 @@ public class WFCGenerator : MonoBehaviour
         }
 
         RemovePossbilitiesFromOuterWallCells();
+        CheckForConflicts(); 
 
     }
 
