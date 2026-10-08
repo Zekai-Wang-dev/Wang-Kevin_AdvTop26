@@ -111,6 +111,12 @@ public class WFCGenerator : MonoBehaviour
 
         Queue<int> cellsToCheck = new Queue<int>();
 
+        if (startingIndex == -1)
+        {
+            Debug.LogError("No starting cell found with a door or hallway.");
+            return false;
+        }
+
         cellsToCheck.Enqueue(startingIndex);
 
         do
@@ -128,7 +134,7 @@ public class WFCGenerator : MonoBehaviour
                     if (neighborX >= 0 && neighborX < GRID_SIZE.x && neighborY >= 0 && neighborY < GRID_SIZE.y)
                     {
                         int neighborIndex = neighborY * (int)GRID_SIZE.x + neighborX;
-                        if (!visitedCells[neighborIndex])
+                        if (!visitedCells[neighborIndex] && (cells[neighborIndex].room.directionTypes[(directionIndex + 2) % 4] == DirectionType.Door || cells[neighborIndex].room.directionTypes[(directionIndex + 2) % 4] == DirectionType.Hallway))
                         {
                             visitedCells[neighborIndex] = true;
                             cellsToCheck.Enqueue(neighborIndex);

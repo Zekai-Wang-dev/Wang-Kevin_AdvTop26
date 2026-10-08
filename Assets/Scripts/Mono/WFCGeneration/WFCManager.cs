@@ -40,13 +40,13 @@ public class WFCManager : MonoBehaviour
 
         }
 
-        if (!wfcGenerator.CheckAllRoomsConnectivity() && generationComplete)
+        if (wfcGenerator.failed || !generationComplete)
+            return;
+
+        if (!wfcGenerator.CheckAllRoomsConnectivity())
         {
-
             Debug.Log("Generation failed due to connectivity issues.");
-
-            StartGeneration();
-
+            return;
         }
 
     }
