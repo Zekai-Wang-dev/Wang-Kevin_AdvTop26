@@ -7,6 +7,8 @@ public class WFCManager : MonoBehaviour
 
     public int retries = 0; 
 
+    public int maxRetries = 1000;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -30,7 +32,7 @@ public class WFCManager : MonoBehaviour
 
             wfcGenerator.SelectNextRoom();
 
-            if (wfcGenerator.failed)
+            if (wfcGenerator.failed && retries < maxRetries)
             {
 
                 Debug.Log("Generation failed.");
@@ -51,11 +53,14 @@ public class WFCManager : MonoBehaviour
         if (wfcGenerator.failed || !generationComplete)
             return;
 
-        if (!wfcGenerator.CheckAllRoomsConnectivity())
+        if (!wfcGenerator.CheckAllRoomsConnectivity() && retries < maxRetries)
         {
             Debug.Log("Generation failed due to connectivity issues.");
-            wfcGenerator.failed = true;
-            wfcGenerator.generationComplete = false;
+            wfcGenerator.GenerateCells();
+            wfcGenerator.failed = false;
+            retries++;
+            Debug.Log("Retrying generation. Attempt: " + retries);
+            StartGeneration();
 
             return;
         }

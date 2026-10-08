@@ -150,6 +150,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WFCManager
   wfcGenerator: {fileID: 690476401}
+  retries: 0
+  maxRetries: 1000
 --- !u!4 &690476400
 Transform:
   m_ObjectHideFlags: 0
@@ -188,6 +190,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5c9ebb259f473b546aa700575f9822f6, type: 2}
   - {fileID: 11400000, guid: c5e778e622384f44ea9b17955a1786ee, type: 2}
   - {fileID: 11400000, guid: 37a57ccbff4465d49ae15b5c607836b4, type: 2}
+  - {fileID: 11400000, guid: 1eda71399c2da524ebecf27d779021a8, type: 2}
+  - {fileID: 11400000, guid: ebd87d3109a36a247a5807512ebdf209, type: 2}
+  - {fileID: 11400000, guid: cd3b11b7ef4a742478d338540dd07dc1, type: 2}
   failed: 0
   generationComplete: 0
 --- !u!1 &711759710
