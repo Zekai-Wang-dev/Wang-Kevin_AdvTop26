@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4f1257c79f8f334ca8fae2120242c21, type: 3}
   m_Name: Room1 6
   m_EditorClassIdentifier: Assembly-CSharp::Rooms
-  directionTypes: 02000000020000000200000001000000
+  directionTypes: 01000000020000000200000001000000
