@@ -117,49 +117,15 @@ public class WFCGenerator : MonoBehaviour
         }
 
         int cellIndex = candidates[Random.Range(0, candidates.Count)];
+        Cells cell = cells[cellIndex];
 
-        int randomCellIndex = candidates[cellIndex];
-        int randomRoomIndex = Random.Range(0, cells[randomCellIndex].possibleRooms.Count);
+        int roomIndex = Random.Range(0, cell.possibleRooms.Count);
+        cell.room = cell.possibleRooms[roomIndex];
+        cell.possibleRooms = new List<Rooms> { cell.room };
+        cell.collapsed = true;
 
-        bool foundUncollapsedCell = false;
-        bool uncollapsedCellsExist = false; 
-
-        for (int i = 0; i < cells.Count; i++)
-        {
-            if (!cells[i].collapsed)
-            {
-                uncollapsedCellsExist = true;
-            }
-        }   
-
-        if (!uncollapsedCellsExist)
-        {
-            generationComplete = true;
-            return;
-        }
-        else
-        {
-
-            while (foundUncollapsedCell == false)
-            {
-                if (!cells[randomCellIndex].collapsed)
-                {
-                    foundUncollapsedCell = true;
-                }
-                else
-                {
-                    randomCellIndex = candidates[Random.Range(0, candidates.Count)];
-                    randomRoomIndex = Random.Range(0, cells[randomCellIndex].possibleRooms.Count);
-                }
-            }
-
-        }
-            
-        cells[randomCellIndex].room = cells[randomCellIndex].possibleRooms[randomRoomIndex];
-        cells[randomCellIndex].collapsed = true;
-        cells[randomCellIndex].possibleRooms = new List<Rooms> { cells[randomCellIndex].room };
         CheckForConflicts();
-        
+
     }
 
     // Method to check for conflicts between adjacent cells based on their possible rooms and direction types. If a conflict is found, it removes the conflicting room from the adjacent cell's possible rooms. If an adjacent cell is left with only one possible room, it collapses that cell as well. If any cell has no possible rooms left, it sets the failed flag to true and logs an error message.
