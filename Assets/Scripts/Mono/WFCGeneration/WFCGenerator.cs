@@ -97,7 +97,7 @@ public class WFCGenerator : MonoBehaviour
             int column = i % (int)GRID_SIZE.x;
             int row = i / (int)GRID_SIZE.x;
 
-            Vector3 targetPosition = new Vector3(
+            Vector3 targetPosition = transform.position + new Vector3(
                 GRID_OFFSET.x + column  * CELL_SIZE.x,
                 0f,
                 GRID_OFFSET.y - row  * CELL_SIZE.y
