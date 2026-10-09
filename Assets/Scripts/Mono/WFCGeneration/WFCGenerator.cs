@@ -285,13 +285,11 @@ public class WFCGenerator : MonoBehaviour
             int column = i % width;
             int row = i / width;
 
-            Transform anchor = cells[i].room?.prefab?.GetComponent<HasAnAnchor>()?.anchor;
-
-            Vector3 targetPosition = anchor.position + new Vector3(
+            Vector3 targetPosition = transform.position + new Vector3(
                 GRID_OFFSET.x + column * CELL_SIZE.x,
                 0f,
                 GRID_OFFSET.y - row * CELL_SIZE.y
-            );  
+            );
 
             Cells cell = cells[i];
 
