@@ -98,9 +98,9 @@ public class WFCGenerator : MonoBehaviour
             int row = i / (int)GRID_SIZE.x;
 
             Vector3 targetPosition = new Vector3(
-                GRID_OFFSET.x + (column + 0.5f) * CELL_SIZE.x,
+                GRID_OFFSET.x + column  * CELL_SIZE.x,
                 0f,
-                GRID_OFFSET.y - (row + 0.5f) * CELL_SIZE.y
+                GRID_OFFSET.y - row  * CELL_SIZE.y
             );
 
             GameObject roomInstance = Instantiate(
@@ -285,11 +285,13 @@ public class WFCGenerator : MonoBehaviour
             int column = i % width;
             int row = i / width;
 
-            Vector3 position = transform.position + new Vector3(
+            Transform anchor = cells[i].room?.prefab?.GetComponent<HasAnAnchor>()?.anchor;
+
+            Vector3 targetPosition = anchor.position + new Vector3(
                 GRID_OFFSET.x + column * CELL_SIZE.x,
                 0f,
                 GRID_OFFSET.y - row * CELL_SIZE.y
-            );
+            );  
 
             Cells cell = cells[i];
 
@@ -298,7 +300,7 @@ public class WFCGenerator : MonoBehaviour
                 : cell.collapsed ? Color.green : Color.gray;
 
             Gizmos.DrawWireCube(
-                position,
+                targetPosition,
                 new Vector3(CELL_SIZE.x, 0.1f, CELL_SIZE.y)
             );
 
@@ -308,10 +310,10 @@ public class WFCGenerator : MonoBehaviour
             float halfWidth = CELL_SIZE.x * 0.5f;
             float halfDepth = CELL_SIZE.y * 0.5f;
 
-            Vector3 northWest = position + new Vector3(-halfWidth, 0, halfDepth);
-            Vector3 northEast = position + new Vector3(halfWidth, 0, halfDepth);
-            Vector3 southEast = position + new Vector3(halfWidth, 0, -halfDepth);
-            Vector3 southWest = position + new Vector3(-halfWidth, 0, -halfDepth);
+            Vector3 northWest = targetPosition + new Vector3(-halfWidth, 0, halfDepth);
+            Vector3 northEast = targetPosition + new Vector3(halfWidth, 0, halfDepth);
+            Vector3 southEast = targetPosition + new Vector3(halfWidth, 0, -halfDepth);
+            Vector3 southWest = targetPosition + new Vector3(-halfWidth, 0, -halfDepth);
 
             // North
             Gizmos.color = GetDirectionColor(cell.room.directionTypes[0]);
