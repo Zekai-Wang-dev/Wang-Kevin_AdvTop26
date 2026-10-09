@@ -32,6 +32,10 @@ public class WFCGenerator : MonoBehaviour
     // Offset for the grid in world space
     public Vector2 GRID_OFFSET = new Vector2(0, 0);
 
+    public Vector2 CELL_OFFSET = new Vector2(5, 5);
+
+    public Transform generateLocation;
+
     // List of possible room types that can be assigned to cells
     public List<Rooms> possibleRooms = new List<Rooms>();
 
@@ -81,6 +85,37 @@ public class WFCGenerator : MonoBehaviour
 
         return generationComplete; 
 
+    }
+
+    public void InstantiatePrefabs()
+    {
+        for (int i = 0; i < cells.Count; i++)
+        {
+            if (!cells[i].collapsed || cells[i].room == null)
+                continue;
+
+            int column = i % (int)GRID_SIZE.x;
+            int row = i / (int)GRID_SIZE.x;
+
+            Vector3 targetPosition = new Vector3(
+                GRID_OFFSET.x + (column + 0.5f) * CELL_SIZE.x,
+                0f,
+                GRID_OFFSET.y - (row + 0.5f) * CELL_SIZE.y
+            );
+
+            GameObject roomInstance = Instantiate(
+                cells[i].room.prefab,
+                targetPosition,
+                Quaternion.identity
+            );
+
+            Transform anchor = roomInstance.GetComponent<HasAnAnchor>()?.anchor;
+
+            if (anchor != null)
+            {
+                roomInstance.transform.position += targetPosition - anchor.position;
+            }
+        }
     }
 
     public bool CheckAllRoomsConnectivity()

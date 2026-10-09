@@ -41,8 +41,8 @@ public class WFCManager : MonoBehaviour
                 retries++;
                 Debug.Log("Retrying generation. Attempt: " + retries);
                 StartGeneration();
-                
-                break; 
+
+                break;
 
             }
 
@@ -64,7 +64,16 @@ public class WFCManager : MonoBehaviour
 
             return;
         }
+        else if (!wfcGenerator.CheckAllRoomsConnectivity() && retries >= maxRetries)
+        {
+            Debug.LogError("Generation failed due to connectivity issues. Maximum retries reached.");
+            return;
+        }
+        else
+        {
+            Debug.Log("Generation complete.");
+            wfcGenerator.InstantiatePrefabs();
 
+        }
     }
-
 }

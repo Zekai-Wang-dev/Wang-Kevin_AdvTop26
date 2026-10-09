@@ -12,6 +12,9 @@ public class Rooms : ScriptableObject
     [SerializeField]
     public DirectionType[] directionTypes = new DirectionType[4] { DirectionType.None, DirectionType.None, DirectionType.None, DirectionType.None };
 
+    [SerializeField]
+    public GameObject prefab; // Prefab for the room
+
     // Method to check for direction conflicts between the current room and the adjacent room based on the direction index and direction type.
     public bool CheckDirectionConflicts(int directionIndex, DirectionType directionType)
     {

@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: Room1 7
   m_EditorClassIdentifier: Assembly-CSharp::Rooms
   directionTypes: 01000000010000000100000002000000
+  prefab: {fileID: 6189931930564978958, guid: ecebe60e915e4b14394c7418ee6036e1, type: 3}
