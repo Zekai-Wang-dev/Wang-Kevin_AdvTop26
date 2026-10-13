@@ -271,6 +271,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 690476400}
+  - component: {fileID: 690476402}
   - component: {fileID: 690476399}
   - component: {fileID: 690476401}
   m_Layer: 0
@@ -323,8 +324,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WFCGenerator
   GRID_SIZE: {x: 10, y: 10}
-  CELL_SIZE: {x: 10, y: 10}
+  CELL_SIZE: {x: 5, y: 5}
   GRID_OFFSET: {x: 0, y: 0}
+  CELL_OFFSET: {x: 0, y: 0}
   generateLocation: {fileID: 66246319}
   possibleRooms:
   - {fileID: 11400000, guid: 0251c40a9d9e97040866fcfc4611213b, type: 2}
@@ -339,6 +341,22 @@ MonoBehaviour:
   - {fileID: 11400000, guid: cd3b11b7ef4a742478d338540dd07dc1, type: 2}
   failed: 0
   generationComplete: 0
+--- !u!114 &690476402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690476398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ab071e3333338f41b5059bb6b1e06f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomBuilder
+  groundPrefab: {fileID: 2195897818640828134, guid: dcfce8d14c55ad5499d101e752964ffe, type: 3}
+  wallPrefab: {fileID: 2195897818640828134, guid: 56502b43fb7c68f4a9f4631c8e12924f, type: 3}
+  doorPrefab: {fileID: 2195897818640828134, guid: ece84b083e1b7114bb63cae80498a662, type: 3}
+  hallwayPrefab: {fileID: 2195897818640828134, guid: 6b8325767066141478eb8382ff149e91, type: 3}
 --- !u!1 &711759710
 GameObject:
   m_ObjectHideFlags: 0

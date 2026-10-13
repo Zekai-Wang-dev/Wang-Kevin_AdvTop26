@@ -27,7 +27,7 @@ public class WFCGenerator : MonoBehaviour
     public Vector2 GRID_SIZE = new Vector2(10, 10);
 
     // Cell size in terms of world units
-    public Vector2 CELL_SIZE = new Vector2(10, 10);
+    public Vector2 CELL_SIZE = new Vector2(5, 5);
 
     // Offset for the grid in world space
     public Vector2 GRID_OFFSET = new Vector2(0, 0);
@@ -87,35 +87,26 @@ public class WFCGenerator : MonoBehaviour
 
     }
 
-    public void InstantiatePrefabs()
+    public void BuildAllRooms()
     {
+
         for (int i = 0; i < cells.Count; i++)
         {
-            if (!cells[i].collapsed || cells[i].room == null)
-                continue;
-
             int column = i % (int)GRID_SIZE.x;
             int row = i / (int)GRID_SIZE.x;
 
-            Vector3 targetPosition = transform.position + new Vector3(
-                GRID_OFFSET.x + column  * CELL_SIZE.x,
+            Vector3 targetPosition = generateLocation.position + new Vector3(
+                GRID_OFFSET.x + column * CELL_SIZE.x,
                 0f,
-                GRID_OFFSET.y - row  * CELL_SIZE.y
+                GRID_OFFSET.y - row * CELL_SIZE.y
             );
-
-            GameObject roomInstance = Instantiate(
-                cells[i].room.prefab,
-                targetPosition,
-                Quaternion.identity
-            );
-
-            Transform anchor = roomInstance.GetComponent<HasAnAnchor>()?.anchor;
-
-            if (anchor != null)
+            if (cells[i].collapsed && cells[i].room != null)
             {
-                roomInstance.transform.position += targetPosition - anchor.position;
+                RoomBuilder roomBuilder = GetComponent<RoomBuilder>();
+                roomBuilder.BuildRoom(cells[i].room, targetPosition);
             }
         }
+
     }
 
     public bool CheckAllRoomsConnectivity()

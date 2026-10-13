@@ -72,7 +72,7 @@ public class WFCManager : MonoBehaviour
         else
         {
             Debug.Log("Generation complete.");
-            wfcGenerator.InstantiatePrefabs();
+            wfcGenerator.BuildAllRooms();
 
         }
     }
