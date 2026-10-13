@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityPipeline.Microsoft.CodeAnalysis;
 
 //Class representing a cell in the Wave Function Collapse algorithm, which holds possible rooms, the selected room, and its collapsed state.
 public class Cells
@@ -276,7 +277,7 @@ public class WFCGenerator : MonoBehaviour
             int column = i % width;
             int row = i / width;
 
-            Vector3 targetPosition = transform.position + new Vector3(
+            Vector3 targetPosition = generateLocation.position + new Vector3(
                 GRID_OFFSET.x + column * CELL_SIZE.x,
                 0f,
                 GRID_OFFSET.y - row * CELL_SIZE.y

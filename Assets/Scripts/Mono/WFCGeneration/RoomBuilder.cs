@@ -44,19 +44,19 @@ public class RoomBuilder : MonoBehaviour
                 {
                     case 0: // North
                         offset = new Vector3(0, 0, 2.5f);
-                        rotation = new Vector3(0, 0, 0);
+                        rotation = new Vector3(0, 90, 0);
                         break;
                     case 1: // East
                         offset = new Vector3(2.5f, 0, 0);
-                        rotation = new Vector3(0, 90, 0);
+                        rotation = new Vector3(0, 0, 0);
                         break;
                     case 2: // South
                         offset = new Vector3(0, 0, -2.5f);
-                        rotation = new Vector3(0, 180, 0);
+                        rotation = new Vector3(0, 270, 0);
                         break;
                     case 3: // West
                         offset = new Vector3(-2.5f, 0, 0);
-                        rotation = new Vector3(0, 270, 0);
+                        rotation = new Vector3(0, 180, 0);
                         break;
                 }
                 Instantiate(prefab, position + offset, Quaternion.Euler(rotation));
