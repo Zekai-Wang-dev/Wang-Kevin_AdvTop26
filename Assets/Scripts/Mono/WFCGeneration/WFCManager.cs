@@ -14,6 +14,7 @@ public class WFCManager : MonoBehaviour
     {
         
         wfcGenerator.GenerateCells();
+        wfcGenerator.AssignDictionaryValues();
 
         StartGeneration(); 
 

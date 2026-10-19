@@ -3,6 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityPipeline.Microsoft.CodeAnalysis;
 
+[System.Serializable]
+public class ConnectorEntry
+{
+
+    public DirectionType sideA;
+    public DirectionType sideB;
+    public GameObject prefab; 
+
+}
+
 //Class representing a cell in the Wave Function Collapse algorithm, which holds possible rooms, the selected room, and its collapsed state.
 public class Cells
 {
@@ -49,6 +59,10 @@ public class WFCGenerator : MonoBehaviour
     // Flag indicating whether the generation process is complete
     public bool generationComplete = false;
 
+    public Dictionary<(DirectionType, DirectionType), GameObject> connectors;
+
+    public List<ConnectorEntry> connectorEntries;
+
     // Method to generate the grid of cells and initialize their possible rooms based on the provided list of room types.
     public void GenerateCells()
     {
@@ -88,6 +102,8 @@ public class WFCGenerator : MonoBehaviour
 
     }
 
+    public void 
+
     public void BuildAllRooms()
     {
 
@@ -105,7 +121,74 @@ public class WFCGenerator : MonoBehaviour
             {
                 RoomBuilder roomBuilder = GetComponent<RoomBuilder>();
                 roomBuilder.BuildRoom(cells[i].room, targetPosition);
+
             }
+        }
+
+    }
+
+    public Rooms GetAdjacentRoom(Rooms room, int directionIndex)
+    {
+
+        if (room == null || directionIndex < 0 || directionIndex > 3)
+        {
+            Debug.LogError("Invalid room or direction index.");
+            return null;
+        }
+
+        for (int i = 0; i < cells.Count; i++)
+        {
+            if (directionIndex == 0) // North
+            {
+                int room2Index = i - (int)GRID_SIZE.x;
+                Rooms room2 = (room2Index >= 0 && room2Index < cells.Count) ? cells[room2Index].room : null;
+                return room2; 
+            }
+            else if (directionIndex == 1) // East
+            {
+                int room2Index = i + 1;
+                Rooms room2 = (room2Index >= 0 && room2Index < cells.Count) ? cells[room2Index].room : null;
+                return room2;
+            }
+            else if (directionIndex == 2) // South
+            {
+                int room2Index = i + (int)GRID_SIZE.x;
+                Rooms room2 = (room2Index >= 0 && room2Index < cells.Count) ? cells[room2Index].room : null;
+                return room2;
+            }
+            else if (directionIndex == 3) // West
+            {
+                int room2Index = i - 1;
+                Rooms room2 = (room2Index >= 0 && room2Index < cells.Count) ? cells[room2Index].room : null;
+                return room2;
+            }
+        }
+        return null;
+    }
+
+    public GameObject TryGetConnector(Rooms room, Rooms room2, int directionIndex)
+    {
+
+        if (connectors.TryGetValue((room.directionTypes[directionIndex], room2.directionTypes[(directionIndex + 2) % 4]), out GameObject connectorPrefab))
+        {
+
+            return connectorPrefab; 
+
+        }
+        else
+        {
+            Debug.LogWarning($"No connector found for {room.name} and {room2.name} in direction {directionIndex}");
+            return null;
+        }
+
+    }
+
+    public void AssignDictionaryValues()
+    {
+
+        foreach (ConnectorEntry entry in connectorEntries)
+        {
+            connectors[(entry.sideA, entry.sideB)] = entry.prefab;
         }
 
     }
