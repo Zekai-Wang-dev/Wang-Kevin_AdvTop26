@@ -102,8 +102,6 @@ public class WFCGenerator : MonoBehaviour
 
     }
 
-    public void 
-
     public void BuildAllRooms()
     {
 
