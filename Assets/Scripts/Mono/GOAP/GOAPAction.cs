@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class GOAPAction : MonoBehaviour
+public abstract class GOAPAction 
 {
 
     public float Cost { get; protected set; } = 1f;

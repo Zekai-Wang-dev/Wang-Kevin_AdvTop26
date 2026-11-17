@@ -13,13 +13,12 @@ public class WorldStateEntry
 public class WorldState : MonoBehaviour
 {
 
-    private Dictionary<string, bool> states;
+    private Dictionary<string, bool> states = new(); 
 
     private List<WorldStateEntry> entries;
 
     private void Start()
     {
-        states = new Dictionary<string, bool>();
 
         InitializeDictionary();
     }
