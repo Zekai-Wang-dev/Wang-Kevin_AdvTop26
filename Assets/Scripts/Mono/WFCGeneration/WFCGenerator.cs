@@ -186,7 +186,7 @@ public class WFCGenerator : MonoBehaviour
 
         foreach (ConnectorEntry entry in connectorEntries)
         {
-            connectors[(entry.sideA, entry.sideB)] = entry.prefab;
+            //connectors[(entry.sideA, entry.sideB)] = entry.prefab;
         }
 
     }
