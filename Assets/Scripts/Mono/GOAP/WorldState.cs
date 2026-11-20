@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using UnityEngine;
 
 [System.Serializable]
@@ -12,18 +13,16 @@ public class WorldStateEntry
 }
 
 //The world state of the owner 
-public class WorldState : MonoBehaviour
+[System.Serializable]
+public class WorldState 
 {
 
-    private Dictionary<string, bool> states = new(); 
+    private Dictionary<string, bool> states = new();
 
-    private List<WorldStateEntry> entries;
+    private ReadOnlyDictionary<string, bool> readOnlyStates; 
 
-    private void Start()
-    {
-
-        InitializeDictionary();
-    }
+    [SerializeField]
+    private List<WorldStateEntry> InitialStateEntries = new(); 
 
     //Initialize the dictionary based on the entries made in the inspector 
     public void InitializeDictionary()
@@ -31,36 +30,20 @@ public class WorldState : MonoBehaviour
 
         states.Clear(); 
 
-        foreach (var entry in entries)
+        foreach (var entry in InitialStateEntries)
         {
 
-            states.Add(entry.stateName, entry.stateActive); 
+            states[entry.stateName] = entry.stateActive; 
 
         }
 
     }
 
-    //A fuction to add new world states 
-    public void AddWorldState(bool active, string name)
-    {
-
-        WorldStateEntry newEntry = new WorldStateEntry();
-        newEntry.stateActive = active;
-        newEntry.stateName = name;
-
-        entries.Add(newEntry);
-
-        InitializeDictionary();
-
-    }
-
     //A function to check a specific world state from the dictionary 
-    public bool CheckWorldState(string name)
+    public bool CheckWorldState(string name, bool requiredValue)
     {
 
-        states.TryGetValue(name, out bool stateActive);
-
-        return stateActive; 
+        return states.TryGetValue(name, out bool stateActive) && stateActive == requiredValue;
 
     }
 
@@ -72,10 +55,12 @@ public class WorldState : MonoBehaviour
 
     }
 
-    public Dictionary<string, bool> GetWorldStates()
+    public IReadOnlyDictionary<string, bool> GetWorldStates()
     {
 
-        return states;
+        readOnlyStates ??= new ReadOnlyDictionary<string, bool>(states);
+
+        return readOnlyStates;
     }
 
     public WorldState Clone()
@@ -87,11 +72,35 @@ public class WorldState : MonoBehaviour
         foreach (var state in states)
         {
 
-            newWorldState.AddWorldState(state.Value, state.Key); 
+            newWorldState.ChangeWorldState(state.Key, state.Value); 
 
         }
 
         return newWorldState; 
+
+    }
+
+    public bool HasSameStates(WorldState otherWorldState)
+    {
+
+        IReadOnlyDictionary<string, bool> otherStates = otherWorldState.GetWorldStates();
+
+        if (otherStates.Count != states.Count) return false; 
+
+        foreach (var state in states)
+        {
+
+
+            if (!otherStates.TryGetValue(state.Key, out bool active) || state.Value != active)
+            {
+
+                return false;
+
+            }
+
+        }
+
+        return true; 
 
     }
 

@@ -6,13 +6,21 @@ using UnityEngine;
 public class GOAPAgent : MonoBehaviour
 {
 
+    [SerializeField]
     public WorldState currentState = new WorldState();
     public GOALPlanner goalPlanner = new GOALPlanner();
 
     public List<GOAPAction> actions;
     public GOAPGoal goals;
 
-    private Queue<GOAPAction> plannedActions; 
+    private Queue<GOAPAction> plannedActions;
+
+    private void Start()
+    {
+        
+        currentState.InitializeDictionary();
+
+    }
 
     public void PlanActions()
     {
