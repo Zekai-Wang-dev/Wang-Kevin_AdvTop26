@@ -1,16 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class GOALPlanner 
 {
 
-    private const int MAX_NODE_EXPANSIONS = 20;
+    private float totalCost = 0; 
 
     //A fuction to make the plan for the agent based on its current world state, avaiable actions, and the goal the planner is accomplishing 
-    public Queue<GOAPAction> Plan(WorldState currentState, List<GOAPAction> actions, GOAPGoal goals)
+    public Queue<GOAPAction> Plan(WorldState currentState, List<GOAPAction> actions, GOAPGoal goal, int maxNodeExpansions)
     {
+        totalCost = float.PositiveInfinity;
 
-        if (CheckGoalAccomplished(goals, currentState)) { Debug.Log("Goal already accomplished");  return new(); }
+        Debug.Log("Planning actions"); 
+
+        if (CheckGoalAccomplished(goal, currentState)) { Debug.Log("Goal already accomplished"); totalCost = 0; return new(); }
 
         GOAPNode initNode = new(currentState, null, null, 0);
 
@@ -22,7 +26,7 @@ public class GOALPlanner
 
         savedWorldStates.Add((currentState, 0));
 
-        for (int i = 0; i < MAX_NODE_EXPANSIONS; i++)
+        for (int i = 0; i < maxNodeExpansions; i++)
         {
 
             GOAPNode prevNode = FindCheapestNodeInList(nodeList);
@@ -31,12 +35,19 @@ public class GOALPlanner
 
             nodeList.Remove(prevNode);
 
-            if (IsOudatedNode(savedWorldStates, prevNode)) { i--; continue; }
+            if (IsOudatedNode(savedWorldStates, prevNode)) { i--; Debug.Log("Removing higher cost nodes");  continue; }
 
-            if (CheckGoalAccomplished(goals, prevNode.currenState))
+            if (CheckGoalAccomplished(goal, prevNode.currenState))
             {
 
-                return BacktrackActionsFromNodeList(prevNode);
+                Queue<GOAPAction> plannedActions = BacktrackActionsFromNodeList(prevNode);
+
+                if (plannedActions != null)
+                {
+                    SetTotalCostOfPlan(prevNode);
+                    return plannedActions;
+                }
+                else return null; 
 
             }
 
@@ -106,6 +117,8 @@ public class GOALPlanner
 
         }
 
+        Debug.Log("No plan can be found within search budget"); 
+
         return null; 
 
     }
@@ -122,7 +135,23 @@ public class GOALPlanner
 
         }
 
+        Debug.Log("Goal accomplishable confirmed to be: " + goalAchievable); 
+
         return goalAchievable;
+
+    }
+
+    private void SetTotalCostOfPlan(GOAPNode finalNode)
+    {
+
+        totalCost = finalNode.totalCost; 
+
+    }
+
+    public float GetTotalCostOfPlan()
+    {
+
+        return totalCost; 
 
     }
 
