@@ -17,12 +17,55 @@ public class GOAPAgent : MonoBehaviour
 
     [SerializeReference]
     public List<GOAPAction> actions = new(); 
+    private List<GOAPAction> candidateActions = new();
+    private List<GOAPAction> failedActions = new(); 
 
     [SerializeField]
     public List<GOAPGoal> goals = new();
     private List<GOAPGoal> candidateGoals = new(); 
     private List<(GOAPGoal goal, Queue<GOAPAction> action, float totalCost)> candidatePlans = new();
     private (GOAPGoal goal, Queue<GOAPAction> action, float totalCost) chosenPlan = new();
+
+#if UNITY_EDITOR
+    [ContextMenu("Add Test Action")]
+    private void AddTestAction()
+    {
+        var serializedAgent = new UnityEditor.SerializedObject(this);
+        var actionList = serializedAgent.FindProperty(nameof(actions));
+
+        int index = actionList.arraySize;
+        actionList.arraySize++;
+
+        actionList.GetArrayElementAtIndex(index).managedReferenceValue =
+            new MoveToPoint();
+
+        serializedAgent.ApplyModifiedProperties();
+    }
+#endif
+
+    [ContextMenu("Test Restore Failed Movement")]
+    private void TestRestoreFailedMovement()
+    {
+        if (!Application.isPlaying)
+            return;
+
+        var movement = failedActions.Find(
+            action => action is MoveToPoint
+        ) as MoveToPoint;
+
+        if (movement == null)
+        {
+            Debug.Log("No failed movement action to restore.");
+            return;
+        }
+
+        movement.ForceFail = false;
+
+        currentState.ChangeWorldState("ArrivedAtPoint", false);
+        currentState.ChangeWorldState("HasItem", false);
+
+        RestoreFailedAction(movement);
+    }
 
     private void Start()
     {
@@ -64,7 +107,7 @@ public class GOAPAgent : MonoBehaviour
 
         FindGoalCandidates();
 
-        List<GOAPGoal> remainingGoals = candidateGoals;
+        List<GOAPGoal> remainingGoals = new(candidateGoals);
 
         while (remainingGoals.Count > 0)
         {
@@ -82,6 +125,8 @@ public class GOAPAgent : MonoBehaviour
                 }
 
             }
+
+            FindActionCandidates();
 
             FindPlanCandidates(highestPriority, remainingGoals);
 
@@ -126,6 +171,21 @@ public class GOAPAgent : MonoBehaviour
 
     }
 
+    public void FindActionCandidates()
+    {
+
+        candidateActions.Clear(); 
+
+        foreach (var action in actions)
+        {
+            if (!failedActions.Contains(action))
+            {
+                candidateActions.Add(action);
+            }
+        }
+
+    }
+
     public void FindGoalCandidates()
     {
 
@@ -133,14 +193,10 @@ public class GOAPAgent : MonoBehaviour
 
         foreach (var goal in goals)
         {
-
             if (!goalPlanner.CheckGoalAccomplished(goal, currentState))
             {
-
                 candidateGoals.Add(goal);
-
             }
-
         }
 
     }
@@ -156,7 +212,7 @@ public class GOAPAgent : MonoBehaviour
             if (goal.priority == highestPriority)
             {
 
-                Queue<GOAPAction> plannedActions = goalPlanner.Plan(currentState, actions, goal, maxNodeExpansions);
+                Queue<GOAPAction> plannedActions = goalPlanner.Plan(currentState, candidateActions, goal, maxNodeExpansions);
 
                 if (plannedActions != null)
                 {
@@ -185,6 +241,7 @@ public class GOAPAgent : MonoBehaviour
                 break;
 
             case ActionStatus.Failure:
+                failedActions.Add(action);
                 PlanActions(); 
 
                 break;
@@ -215,6 +272,17 @@ public class GOAPAgent : MonoBehaviour
 
             currentState.ChangeWorldState(effect.Key, effect.Value); 
 
+        }
+
+    }
+
+    public void RestoreFailedAction(GOAPAction action)
+    {
+        failedActions.Remove(action);
+
+        if (chosenPlan.action == null || chosenPlan.action.Count == 0)
+        {
+            PlanActions();
         }
 
     }
