@@ -464,7 +464,7 @@ Transform:
   m_GameObject: {fileID: 1685372413}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.86, y: 2.27, z: -3.99}
+  m_LocalPosition: {x: 5.86, y: 2.27, z: -10.83}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -487,9 +487,8 @@ MonoBehaviour:
     InitialStateEntries: []
   maxNodeExpansions: 20
   actions:
-  - rid: 6313496313821134922
-  - rid: 6313496313821134923
-  - rid: 6313496313821134926
+  - rid: 6313496337684889673
+  - rid: 6313496337684889675
   goals:
   - goalName: PickUpItem
     priority: 0
@@ -499,36 +498,20 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 6313496313821134922
+    - rid: 6313496337684889673
       type: {class: MoveToPoint, ns: , asm: Assembly-CSharp}
       data:
         Cost: 1
         PreconditionsEntry: []
-        EffectsEntry:
-        - stateName: ArrivedAtPoint
-          stateActive: 1
+        EffectsEntry: []
         stateName: WalkToPoint
-        ForceFail: 1
-    - rid: 6313496313821134923
+        ForceFail: 0
+    - rid: 6313496337684889675
       type: {class: PickUpItem, ns: , asm: Assembly-CSharp}
       data:
         Cost: 1
-        PreconditionsEntry:
-        - stateName: ArrivedAtPoint
-          stateActive: 1
-        EffectsEntry:
-        - stateName: HasItem
-          stateActive: 1
-    - rid: 6313496313821134926
-      type: {class: MoveToPoint, ns: , asm: Assembly-CSharp}
-      data:
-        Cost: 2
         PreconditionsEntry: []
-        EffectsEntry:
-        - stateName: ArrivedAtPoint
-          stateActive: 1
-        stateName: WalkToPoint
-        ForceFail: 0
+        EffectsEntry: []
 --- !u!195 &1685372419
 NavMeshAgent:
   m_ObjectHideFlags: 0

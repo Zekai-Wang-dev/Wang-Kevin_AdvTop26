@@ -7,17 +7,41 @@ public class GOAPAgentEditor : UnityEditor.Editor
 
     public override void OnInspectorGUI()
     {
-        base.OnInspectorGUI();
-
         DrawDefaultInspector();
 
         if (GUILayout.Button("Add Action"))
         {
 
-            Debug.Log("Adding new action to GOAPAgent.");
+            GenericMenu menu = new GenericMenu();
+
+            foreach (var actionType in TypeCache.GetTypesDerivedFrom<GOAPAction>())
+            {
+                menu.AddItem(new GUIContent(actionType.Name), false, () => AddAction(actionType));
+            }
+
+            menu.ShowAsContext();
 
         }
 
     }
-    
+
+    public void AddAction(System.Type actionType)
+    {
+        
+        serializedObject.Update();
+
+        var actionsProperty = serializedObject.FindProperty("actions");
+
+        int currentIndex = actionsProperty.arraySize;
+
+        actionsProperty.arraySize++;
+
+        GOAPAction newAction = (GOAPAction)System.Activator.CreateInstance(actionType);
+
+        actionsProperty.GetArrayElementAtIndex(currentIndex).managedReferenceValue = newAction;
+
+        serializedObject.ApplyModifiedProperties();
+
+    }
+
 }

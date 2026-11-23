@@ -26,47 +26,6 @@ public class GOAPAgent : MonoBehaviour
     private List<(GOAPGoal goal, Queue<GOAPAction> action, float totalCost)> candidatePlans = new();
     private (GOAPGoal goal, Queue<GOAPAction> action, float totalCost) chosenPlan = new();
 
-#if UNITY_EDITOR
-    [ContextMenu("Add Test Action")]
-    private void AddTestAction()
-    {
-        var serializedAgent = new UnityEditor.SerializedObject(this);
-        var actionList = serializedAgent.FindProperty(nameof(actions));
-
-        int index = actionList.arraySize;
-        actionList.arraySize++;
-
-        actionList.GetArrayElementAtIndex(index).managedReferenceValue =
-            new MoveToPoint();
-
-        serializedAgent.ApplyModifiedProperties();
-    }
-#endif
-
-    [ContextMenu("Test Restore Failed Movement")]
-    private void TestRestoreFailedMovement()
-    {
-        if (!Application.isPlaying)
-            return;
-
-        var movement = failedActions.Find(
-            action => action is MoveToPoint
-        ) as MoveToPoint;
-
-        if (movement == null)
-        {
-            Debug.Log("No failed movement action to restore.");
-            return;
-        }
-
-        movement.ForceFail = false;
-
-        currentState.ChangeWorldState("ArrivedAtPoint", false);
-        currentState.ChangeWorldState("HasItem", false);
-
-        RestoreFailedAction(movement);
-    }
-
     private void Start()
     {
         
