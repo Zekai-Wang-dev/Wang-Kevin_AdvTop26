@@ -1,0 +1,3 @@
+ActionID,ActionType,InitialCost,FSMStateName
+WalkToPoint,MoveToPoint,1.00,WalkToPoint
+PickUpItem,,1,

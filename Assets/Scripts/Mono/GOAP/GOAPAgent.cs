@@ -6,6 +6,8 @@ using UnityEngine.UIElements;
 public class GOAPAgent : MonoBehaviour
 {
 
+    public string ProfileID = ""; 
+
     [SerializeField]
     public WorldState currentState = new WorldState();
 
@@ -29,7 +31,7 @@ public class GOAPAgent : MonoBehaviour
     private void Start()
     {
         
-        currentState.InitializeDictionary();
+        /*currentState.InitializeDictionary();
 
         foreach (var goal in goals)
         {
@@ -43,7 +45,7 @@ public class GOAPAgent : MonoBehaviour
 
             action.InitializeDictionaries();
 
-        }
+        }*/
 
         PlanActions(); 
 
