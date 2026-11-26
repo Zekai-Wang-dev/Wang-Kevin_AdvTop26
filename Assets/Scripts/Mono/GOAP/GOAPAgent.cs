@@ -6,7 +6,7 @@ using UnityEngine.UIElements;
 public class GOAPAgent : MonoBehaviour
 {
 
-    public string ProfileID = ""; 
+    public string ProfileID = "";
 
     [SerializeField]
     public WorldState currentState = new WorldState();
@@ -30,22 +30,8 @@ public class GOAPAgent : MonoBehaviour
 
     private void Start()
     {
-        
-        /*currentState.InitializeDictionary();
 
-        foreach (var goal in goals)
-        {
-
-            goal.InitializeDictionary(); 
-
-        }
-
-        foreach (var action in actions)
-        {
-
-            action.InitializeDictionaries();
-
-        }*/
+        GOAPProfileLoader.Instance.LoadProfile(this); 
 
         PlanActions(); 
 

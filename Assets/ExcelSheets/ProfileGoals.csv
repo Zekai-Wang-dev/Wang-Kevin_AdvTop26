@@ -1,2 +1,7 @@
 ProfileID,GoalID
 Guard,PickUpItem
+ScavengerCollection,StoreItem
+ScavengerFull,Survive
+ScavengerFull,InvestigateNoise
+ScavengerFull,StoreItem
+ScavengerFull,Wander

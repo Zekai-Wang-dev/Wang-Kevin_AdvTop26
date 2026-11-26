@@ -1,0 +1,12 @@
+WorldStateID
+ArrivedAtPoint
+AtNest
+ItemLocated
+ItemAvailable
+HasItem
+ItemStored
+IsSafe
+DangerNearby
+NoiseHeard
+NoiseInvestigated
+PatrolCompleted

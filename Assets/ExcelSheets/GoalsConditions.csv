@@ -1,2 +1,6 @@
 GoalID,WorldStateID,State
-PickUpItem,ArrivedAtPoint,TRUE
+PickUpItem,HasItem,TRUE
+Survive,IsSafe,TRUE
+InvestigateNoise,NoiseInvestigated,TRUE
+StoreItem,ItemStored,TRUE
+Wander,PatrolCompleted,TRUE

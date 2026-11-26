@@ -8,7 +8,6 @@ public struct GOAPAgentEntry
     public GameObject agent;
     public Transform spawnLocation; 
     private int agentID;
-    public string profileID; 
     public int GetAgentID()
     {
         return agentID;

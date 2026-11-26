@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Security;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.InputSystem.Android;
 
-public class GOAPProfileLoader 
+public class GOAPProfileLoader : MonoBehaviour
 {
+
+    public static GOAPProfileLoader Instance { get; private set; }
 
     [Header("Profile Tables")]
     [SerializeField] private TextAsset profileIDTable;
@@ -23,6 +22,29 @@ public class GOAPProfileLoader
     [SerializeField] private TextAsset goalsDataTable;
     [SerializeField] private TextAsset goalConditions;
     [SerializeField] private TextAsset worldStateID;
+
+    public void Awake()
+    {
+        
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
+    }
+
+    public void LoadProfile(GOAPAgent agent)
+    {
+
+        LoadGoals(agent);
+        LoadActions(agent);
+        LoadWorldStates(agent);
+
+    }
     public void LoadWorldStates(GOAPAgent agent)
     {
 
@@ -101,58 +123,71 @@ public class GOAPProfileLoader
 
         List<GOAPAction> actions = new();
 
-        List<Dictionary<string, string>> profileRows = CSVReader.ReadCSV(profileActionsTable);
-        List<Dictionary<string, string>> preconditionsRows = CSVReader.ReadCSV(preconditionsDataTable);
-        List<Dictionary<string, string>> effectsRows = CSVReader.ReadCSV(effectsDataTable);
-        List<Dictionary<string, string>> dataRows = CSVReader.ReadCSV(actionsDataTable);
+        var profileRows = CSVReader.ReadCSV(profileActionsTable);
+        var preconditionsRows = CSVReader.ReadCSV(preconditionsDataTable);
+        var effectsRows = CSVReader.ReadCSV(effectsDataTable);
+        var dataRows = CSVReader.ReadCSV(actionsDataTable);
 
         foreach (var profile in profileRows)
         {
 
             if (profile["ProfileID"] != agent.ProfileID) continue;
 
-            foreach (Type actionType in typeof(GOAPAction).Assembly.GetTypes())
+            string actionID = profile["ActionID"];
+
+            foreach (var data in dataRows)
             {
 
-                GOAPAction action = (GOAPAction)Activator.CreateInstance(actionType);
+                if (data["ActionID"] != actionID) continue;
 
-                foreach (var preconditions in preconditionsRows)
+                string className = data["ActionType"]; 
+
+                foreach (Type actionType in typeof(GOAPAction).Assembly.GetTypes())
                 {
+                    
+                    if (className != actionType.Name) continue;
 
-                    if (preconditions["ActionID"] != profile["ActionID"]) continue; 
+                    if (!typeof(GOAPAction).IsAssignableFrom(actionType)) continue;
 
-                    string precondition = preconditions["WorldStateID"]; 
-                    bool state = bool.Parse(preconditions["State"]);
+                    if (actionType.IsAbstract) continue;
 
-                    action.Preconditions[precondition] = state; 
+                    GOAPAction action = (GOAPAction)Activator.CreateInstance(actionType);
+
+                    action.Cost = float.Parse(data["InitialCost"], System.Globalization.CultureInfo.InvariantCulture);
+
+                    foreach (var precondition in preconditionsRows)
+                    {
+                        if (precondition["ActionID"] != actionID) continue;
+
+                        string stateName = precondition["WorldStateID"];
+                        bool stateValue = bool.Parse(precondition["State"]);
+
+                        action.Preconditions[stateName] = stateValue;
+
+                    }
+
+                    foreach (var effect in effectsRows)
+                    {
+                        if (effect["ActionID"] != actionID) continue;
+
+                        string stateName = effect["WorldStateID"];
+                        bool stateValue = bool.Parse(effect["State"]);
+
+                        action.Effects[stateName] = stateValue;
+
+                    }
+
+
+                    actions.Add(action);
+                    break; 
 
                 }
 
-                foreach (var effects in effectsRows)
-                {
+                break; 
 
-                    if (effects["ActionID"] != profile["ActionID"]) continue;
-
-                    string effect = effects["WorldStateID"];
-                    bool state = bool.Parse(effects["State"]); 
-
-                    action.Effects[effect] = state;
-
-                }
-
-                foreach (var data in dataRows)
-                {
-
-                    if (data["ActionID"] != profile["ActionID"]) continue;
-
-                    int cost = int.Parse(data["InitialCost"]);
-
-                    action.Cost = cost; 
-
-                }
-
-                actions.Add(action);
             }
+
+            agent.actions = actions;
 
         }
 

@@ -1,3 +1,15 @@
 ProfileID,ActionID
 Guard,WalkToPoint
 Guard,PickUpItem
+ScavengerCollection,MoveToItem
+ScavengerCollection,PickUpItem
+ScavengerCollection,MoveToNest
+ScavengerCollection,DepositItem
+ScavengerFull,FindItem
+ScavengerFull,MoveToItem
+ScavengerFull,PickUpItem
+ScavengerFull,MoveToNest
+ScavengerFull,DepositItem
+ScavengerFull,InvestigateNoise
+ScavengerFull,RunToSafety
+ScavengerFull,Patrol

@@ -1,3 +1,10 @@
 ActionID,ActionType,InitialCost,FSMStateName
-WalkToPoint,MoveToPoint,1.00,WalkToPoint
-PickUpItem,,1,
+WalkToPoint,MoveToPoint,1,WalkToPoint
+FindItem,FindItem,2,FindItem
+MoveToItem,MoveToItem,2,MoveToItem
+PickUpItem,PickUpItem,1,
+MoveToNest,MoveToNest,3,MoveToNest
+DepositItem,DepositItem,1,
+InvestigateNoise,InvestigateNoise,3,InvestigateNoise
+RunToSafety,RunToSafety,2,RunToSafety
+Patrol,Patrol,5,Patrol

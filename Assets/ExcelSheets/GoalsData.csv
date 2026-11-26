@@ -1,2 +1,6 @@
 GoalID,Priority
 PickUpItem,1
+Survive,100
+InvestigateNoise,70
+StoreItem,50
+Wander,10
